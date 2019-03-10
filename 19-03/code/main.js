@@ -1,95 +1,70 @@
-function getBaseLog(x, y) {
-  return Math.log(y) / Math.log(x);
-}
+d3.csv('data.csv').then(function (csvData) {
+  // console.log(csvData);
 
-d3.csv('data.csv')
-.then(function(data) {
-  console.log(data);
+  let dataMap = {};
 
-  let uniqueDonors = new Set();
-  let donorsMap = {};
+  for (let d1 of csvData) {
+    let d2 = dataMap[d1.year];
 
-  for(let d of data) {
-    uniqueDonors.add(d.donor);
-
-    let country = donorsMap[d.donor];
-
-    if(!country) {
-      country = {
-        name: d.donor,
+    if (!d2) {
+      d2 = {
+        year: d1.year,
         totalDonations: 0
       };
 
-      donorsMap[d.donor] = country;
+      dataMap[d1.year] = d2;
     }
 
-    country.totalDonations += +d.commitment_amount_usd_constant;
+    d2.totalDonations += +d1.commitment_amount_usd_constant;
   }
 
-  uniqueDonors = Array.from(uniqueDonors);
-  let donors = [];
+  let data = [];
 
-  for(let name of uniqueDonors) {
-    // donorsMap[name].logTotal = getBaseLog(1.1, donorsMap[name].totalDonations);
-    donorsMap[name].logTotal = donorsMap[name].totalDonations;
-    donors.push(donorsMap[name]);
+  for (let year in dataMap) {
+    data.push(dataMap[year]);
   }
 
-  donors.sort((a,b) => b.totalDonations - a.totalDonations);
-
-  donors = donors.slice(0,20);
-
-  console.log(donors);
-
-  // let h = 500,
-  //   w = 1200,
-  //   m = {t: 10, b: 10, l: 10, r: 10};
-
-  let svg = d3.select('#countries');
-    // .attr('height', h)
-    // .attr('width', w);
-
-  let maxDonation = d3.max(donors, (d) => d.totalDonations);
-
-  let powerScale = d3.scalePow()
-    .exponent(0.75)
-    .domain([0, maxDonation])
-    .range([0, 10]);
-
-  let g = svg.selectAll('g')
-    .data(donors)
-    .enter()
-    .append('g')
-    .attr('transform', function (d, i) {
-      let x = ((0.5 + i) / donors.length) * 100;
-      let y = 25;
-
-      return `translate(${x},${y})`;
-    });
-
-  g.append('circle')
-      // .attr("cx", function (d, i) {
-      //   return ((0.5 + i) / donors.length) * 100;
-      // })
-      // .attr('cy', 25)
-      .attr('r', (d) => {
-        return powerScale(d.totalDonations);
-        // return (getBaseLog(1.1, d.totalDonations)/getBaseLog(1.1, maxDonation)) * 1;
-        // return (getBaseLog(1.1, d.totalDonations)/getBaseLog(1.1, maxDonation)) * 1;
-      })
-      .attr('fill', 'black')
-      .style('opacity', 0.5);
-
-  g.append('text')
-      .text((d) => d.name)
-      .style('font-size', '0.5px')
-      .attr('transform', 'rotate(270)');
-
-
-
-
-
-
-
-
+  buildChart(data);
 });
+
+function buildChart(data) {
+  let svg = d3.select('#mainChart'),
+    width = +svg.attr('width'),
+    height = +svg.attr('height');
+
+  let base = svg.append('g')
+    .attr('class', 'base-group')
+    .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
+
+  let theta = (2 * Math.PI) / data.length;
+  let startAngle = -1 * Math.PI / 2;
+
+  let maxDonations = d3.max(data, d => d.totalDonations);
+
+  let radius = d3.scaleLinear()
+    .domain([0, maxDonations])
+    .range([0, 100]);
+
+  for (let i = 0; i < data.length; i++) {
+    let d = data[i];
+    d.angle = startAngle + theta * i;
+    d.radius = radius(d.totalDonations);
+  }
+
+  console.log(data);
+
+  const innerRadius = 200;
+
+  let areaGenerator = d3.areaRadial()
+    .curve(d3.curveBasisClosed)
+    .angle(d => d.angle)
+    .innerRadius(innerRadius)
+    .outerRadius(d => innerRadius + d.radius);
+
+  let pathData = areaGenerator(data);
+
+  base.append('path')
+    .attr('d', pathData)
+    .style('stroke', 'red')
+    .style('fill', 'black');
+}
