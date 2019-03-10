@@ -32,6 +32,21 @@ function buildChart(data) {
     width = +svg.attr('width'),
     height = +svg.attr('height');
 
+
+
+  let gradient = svg.append('defs')
+    .append('radialGradient')
+    .attr('id', 'gradient');
+
+  gradient.append('stop')
+    .attr('offset', '75%')
+    .attr('stop-color', '#FF9133');
+
+  gradient.append('stop')
+    .attr('offset', '100%')
+    .attr('stop-color', '#FF0015');
+
+
   let base = svg.append('g')
     .attr('class', 'base-group')
     .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
@@ -65,6 +80,6 @@ function buildChart(data) {
 
   base.append('path')
     .attr('d', pathData)
-    .style('stroke', 'red')
-    .style('fill', 'black');
+    // .style('fill', 'url(#gradient)');
+    .style('fill', 'steelblue');
 }
