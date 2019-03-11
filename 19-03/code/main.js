@@ -167,6 +167,7 @@ function buildChart(overall, data) {
     .attr('transform', 'translate(0, -170)');
 
   createMajorDonors(centerGroup, overall.donors.slice(0, 5));
+  createMajorRecipients(centerGroup, overall.recipients.slice(0, 3));
 }
 
 function createMajorDonors(centerGroup, donors) {
@@ -212,4 +213,46 @@ function createMajorDonors(centerGroup, donors) {
     .attr('fill', 'green')
     .attr('cy', maxRadius + 40)
     .attr('r', d => radius(d.total));
+}
+
+function createMajorRecipients(centerGroup, recipients) {
+  const startY = 0;
+  const deltaY = 40;
+
+  let majorRecipients = centerGroup.append('g')
+    .attr('transform', 'translate(0, 100)');
+
+  majorRecipients.append('text')
+    .attr('text-anchor', 'middle')
+    .text('Major Recipients')
+    .attr('transform', 'translate(0, -30)');
+
+  let recipient = majorRecipients.selectAll('g')
+    .data(recipients)
+    .enter()
+    .append('g')
+    .attr('transform', function (d, i) {
+      let y = startY + (i * deltaY);
+      return `translate(-170, ${y})`;
+    });
+
+  recipient.append('text')
+    // .attr('text-anchor', 'middle')
+    .text(d => d.name);
+
+  const maxBarWidth = 260;
+  const barHeight = 20;
+
+  let maxTotal = d3.max(recipients, d => d.total);
+
+  let width = d3.scaleLinear()
+    .domain([0, maxTotal])
+    .range([0, maxBarWidth]);
+
+  recipient.append('rect')
+    .attr('fill', 'grey')
+    .attr('x', 80)
+    .attr('width', d => width(d.total))
+    .attr('y', -6 -(barHeight / 2))
+    .attr('height', barHeight);
 }
