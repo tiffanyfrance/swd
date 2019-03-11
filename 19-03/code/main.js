@@ -1,5 +1,12 @@
 d3.csv('data.csv').then(function (csvData) {
-  // console.log(csvData);
+  console.log(csvData);
+
+  let overall = {
+    title: 'Overall',
+    total: 0,
+    donors: {},
+    recipients: {}
+  };
 
   let dataMap = {};
 
@@ -8,20 +15,71 @@ d3.csv('data.csv').then(function (csvData) {
 
     if (!d2) {
       d2 = {
+        title: d1.year,
         year: d1.year,
-        totalDonations: 0
+        total: 0,
+        donors: {},
+        recipients: {}
       };
 
       dataMap[d1.year] = d2;
     }
 
-    d2.totalDonations += +d1.commitment_amount_usd_constant;
+    d2.total += +d1.commitment_amount_usd_constant;
+
+    let donorData = d2.donors[d1.donor];
+
+    if (!donorData) {
+      donorData = {
+        name: d1.donor,
+        total: 0
+      };
+
+      d2.donors[d1.donor] = donorData;
+    }
+
+    donorData.total += +d1.commitment_amount_usd_constant;
+
+    let recipientData = d2.recipients[d1.recipient];
+
+    if (!recipientData) {
+      recipientData = {
+        name: d1.recipient,
+        total: 0
+      };
+
+      d2.recipients[d1.recipient] = recipientData;
+    }
+
+    recipientData.total += +d1.commitment_amount_usd_constant;
   }
 
   let data = [];
 
   for (let year in dataMap) {
-    data.push(dataMap[year]);
+    let d = dataMap[year];
+
+    let donors = [];
+    
+    for(let name in d.donors) {
+      donors.push(d.donors[name]);
+    }
+
+    donors.sort((a, b) => b.total - a.total);
+
+    d.donors = donors;
+
+    let recipients = [];
+    
+    for(let name in d.recipients) {
+      recipients.push(d.recipients[name]);
+    }
+
+    recipients.sort((a, b) => b.total - a.total);
+
+    d.recipients = recipients;
+
+    data.push(d);
   }
 
   buildChart(data);
@@ -31,8 +89,6 @@ function buildChart(data) {
   let svg = d3.select('#mainChart'),
     width = +svg.attr('width'),
     height = +svg.attr('height');
-
-
 
   let gradient = svg.append('defs')
     .append('radialGradient')
@@ -54,21 +110,21 @@ function buildChart(data) {
   let theta = (2 * Math.PI) / data.length;
   let startAngle = -1 * Math.PI / 2;
 
-  let maxDonations = d3.max(data, d => d.totalDonations);
+  let maxDonations = d3.max(data, d => d.total);
 
   let radius = d3.scaleLinear()
     .domain([0, maxDonations])
-    .range([0, 100]);
+    .range([0, 200]);
 
   for (let i = 0; i < data.length; i++) {
     let d = data[i];
     d.angle = startAngle + theta * i;
-    d.radius = radius(d.totalDonations);
+    d.radius = radius(d.total);
   }
 
   console.log(data);
 
-  const innerRadius = 200;
+  const innerRadius = 300;
 
   let areaGenerator = d3.areaRadial()
     .curve(d3.curveBasisClosed)
@@ -82,4 +138,19 @@ function buildChart(data) {
     .attr('d', pathData)
     // .style('fill', 'url(#gradient)');
     .style('fill', 'steelblue');
+
+  const textRadius = innerRadius - 20;
+
+  base.selectAll('.text')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .text(d => d.year)
+    .attr('transform', function (d, i) {
+      let x = Math.cos(d.angle) * textRadius;
+      let y = Math.sin(d.angle) * textRadius;
+      let rotate = (d.angle * (180 / Math.PI)) + 90;
+      return `translate(${x},${y}) rotate(${rotate})`;
+    });
 }
