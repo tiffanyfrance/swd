@@ -71,8 +71,8 @@ function addToTotal(map, name, amount) {
 
 function mapToSortedArray(map) {
   let array = [];
-    
-  for(let name in map) {
+
+  for (let name in map) {
     array.push(map[name]);
   }
 
@@ -108,10 +108,10 @@ function buildChart(overall, data) {
   let theta = (2 * Math.PI) / data.length;
   let startAngle = -1 * Math.PI / 2;
 
-  let maxDonations = d3.max(data, d => d.total);
+  let maxTotal = d3.max(data, d => d.total);
 
   let radius = d3.scaleLinear()
-    .domain([0, maxDonations])
+    .domain([0, maxTotal])
     .range([0, 200]);
 
   for (let i = 0; i < data.length; i++) {
@@ -139,10 +139,12 @@ function buildChart(overall, data) {
 
   const textRadius = innerRadius - 20;
 
-  base.selectAll('.text')
+  base.append('g')
+    .selectAll('text.year')
     .data(data)
     .enter()
     .append('text')
+    .attr('class', 'year')
     .attr('text-anchor', 'middle')
     .text(d => d.year)
     .attr('transform', function (d, i) {
@@ -151,4 +153,63 @@ function buildChart(overall, data) {
       let rotate = (d.angle * (180 / Math.PI)) + 90;
       return `translate(${x},${y}) rotate(${rotate})`;
     });
+
+  let centerGroup = base.append('g');
+
+  centerGroup.append('text')
+    .attr('text-anchor', 'middle')
+    .text(overall.title)
+    .attr('transform', 'translate(0, -200)');
+
+  centerGroup.append('text')
+    .attr('text-anchor', 'middle')
+    .text(`Donated: ${overall.total}`)
+    .attr('transform', 'translate(0, -170)');
+
+  createMajorDonors(centerGroup, overall.donors.slice(0, 5));
+}
+
+function createMajorDonors(centerGroup, donors) {
+  const width = 500;
+  const deltaX = width / donors.length;
+  const startX = -(width / 2) + (0.5 * deltaX);
+
+  let majorDonors = centerGroup.append('g')
+    .attr('transform', 'translate(0, -80)');
+
+  majorDonors.append('text')
+    .attr('text-anchor', 'middle')
+    .text('Major Donors')
+    .attr('transform', 'translate(0, -30)');
+
+  let donor = majorDonors.selectAll('g')
+    .data(donors)
+    .enter()
+    .append('g')
+    .attr('transform', function (d, i) {
+      let x = startX + (i * deltaX);
+      return `translate(${x}, 0)`;
+    });
+
+  donor.append('text')
+    .attr('text-anchor', 'middle')
+    .text(d => d.name);
+
+  donor.append('text')
+    .attr('text-anchor', 'middle')
+    .text(d => d.total)
+    .attr('transform', 'translate(0, 30)');
+
+  const maxRadius = 30;
+
+  let maxTotal = d3.max(donors, d => d.total);
+
+  let radius = d3.scaleLinear()
+    .domain([0, maxTotal])
+    .range([0, maxRadius]);
+
+  donor.append('circle')
+    .attr('fill', 'green')
+    .attr('cy', maxRadius + 40)
+    .attr('r', d => radius(d.total));
 }
