@@ -165,14 +165,15 @@ function buildChart(overall, data) {
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
     .text(overall.title)
-    .attr('transform', 'translate(0, -200)')
-    .style('font-size', '18px');
+    .attr('transform', 'translate(0, -180)')
+    .style('font-size', '18px')
+    .style('font-weight', '700');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
     .text(`Donated: ${curr(overall.total)}`)
-    .attr('transform', 'translate(0, -170)')
-    .style('font-size', '18px');
+    .attr('transform', 'translate(0, -150)')
+    .style('font-size', '14px');
 
   createMajorDonors(centerGroup, overall.donors.slice(0, 5));
   createMajorRecipients(centerGroup, overall.recipients.slice(0, 5));
@@ -184,13 +185,13 @@ function createMajorDonors(centerGroup, donors) {
   const startX = -(width / 2) + (0.5 * deltaX);
 
   let majorDonors = centerGroup.append('g')
-    .attr('transform', 'translate(0, -80)');
+    .attr('transform', 'translate(0, -60)');
 
   majorDonors.append('text')
     .attr('text-anchor', 'middle')
     .text('Major Donors')
     .attr('transform', 'translate(0, -30)')
-    .style('font-size', '14px');
+    .style('font-size', '12px');
 
   let donor = majorDonors.selectAll('g')
     .data(donors)
@@ -208,7 +209,7 @@ function createMajorDonors(centerGroup, donors) {
   donor.append('text')
     .attr('text-anchor', 'middle')
     .text(d => '$' + format(d.total))
-    .attr('transform', 'translate(0, 20)');
+    .attr('transform', 'translate(0, 15)');
 
   const maxRadius = 30;
 
@@ -218,11 +219,13 @@ function createMajorDonors(centerGroup, donors) {
     .domain([0, maxTotal])
     .range([0, maxRadius]);
 
+  let greenShades = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6']
+
   donor.append('circle')
-    .attr('fill', 'green')
+    .attr('fill', (d,i) => greenShades[i])
     .attr('cy', maxRadius + 40)
     .attr('r', d => radius(d.total))
-    .attr('transform', 'translate(0, -10)');
+    .attr('transform', 'translate(0, -15)');
 }
 
 function createMajorRecipients(centerGroup, recipients) {
@@ -236,7 +239,7 @@ function createMajorRecipients(centerGroup, recipients) {
     .attr('text-anchor', 'middle')
     .text('Major Recipients')
     .attr('transform', 'translate(0, -30)')
-    .style('font-size', '14px');
+    .style('font-size', '12px');
 
   let recipient = majorRecipients.selectAll('g')
     .data(recipients)
