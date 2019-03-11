@@ -1,5 +1,5 @@
 d3.csv('data.csv').then(function (csvData) {
-  console.log(csvData);
+  // console.log(csvData);
 
   let overall = {
     title: 'Overall',
@@ -11,6 +11,12 @@ d3.csv('data.csv').then(function (csvData) {
   let dataMap = {};
 
   for (let d1 of csvData) {
+    let amount = +d1.commitment_amount_usd_constant;
+
+    overall.total += amount;
+    addToTotal(overall.donors, d1.donor, amount);
+    addToTotal(overall.recipients, d1.recipient, amount);
+
     let d2 = dataMap[d1.year];
 
     if (!d2) {
@@ -25,67 +31,59 @@ d3.csv('data.csv').then(function (csvData) {
       dataMap[d1.year] = d2;
     }
 
-    d2.total += +d1.commitment_amount_usd_constant;
+    d2.total += amount;
 
-    let donorData = d2.donors[d1.donor];
-
-    if (!donorData) {
-      donorData = {
-        name: d1.donor,
-        total: 0
-      };
-
-      d2.donors[d1.donor] = donorData;
-    }
-
-    donorData.total += +d1.commitment_amount_usd_constant;
-
-    let recipientData = d2.recipients[d1.recipient];
-
-    if (!recipientData) {
-      recipientData = {
-        name: d1.recipient,
-        total: 0
-      };
-
-      d2.recipients[d1.recipient] = recipientData;
-    }
-
-    recipientData.total += +d1.commitment_amount_usd_constant;
+    addToTotal(d2.donors, d1.donor, amount);
+    addToTotal(d2.recipients, d1.recipient, amount);
   }
+
+  overall.donors = mapToSortedArray(overall.donors);
+  overall.recipients = mapToSortedArray(overall.recipients);
 
   let data = [];
 
   for (let year in dataMap) {
     let d = dataMap[year];
 
-    let donors = [];
-    
-    for(let name in d.donors) {
-      donors.push(d.donors[name]);
-    }
-
-    donors.sort((a, b) => b.total - a.total);
-
-    d.donors = donors;
-
-    let recipients = [];
-    
-    for(let name in d.recipients) {
-      recipients.push(d.recipients[name]);
-    }
-
-    recipients.sort((a, b) => b.total - a.total);
-
-    d.recipients = recipients;
+    d.donors = mapToSortedArray(d.donors);
+    d.recipients = mapToSortedArray(d.recipients);
 
     data.push(d);
   }
 
-  buildChart(data);
+  buildChart(overall, data);
 });
 
-function buildChart(data) {
+function addToTotal(map, name, amount) {
+  let value = map[name];
+
+  if (!value) {
+    value = {
+      name: name,
+      total: 0
+    };
+
+    map[name] = value;
+  }
+
+  value.total += amount;
+}
+
+function mapToSortedArray(map) {
+  let array = [];
+    
+  for(let name in map) {
+    array.push(map[name]);
+  }
+
+  array.sort((a, b) => b.total - a.total);
+
+  return array;
+}
+
+function buildChart(overall, data) {
+  console.log(overall);
+
   let svg = d3.select('#mainChart'),
     width = +svg.attr('width'),
     height = +svg.attr('height');
