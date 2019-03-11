@@ -1,8 +1,11 @@
+let format = d3.format(".2s"),
+    curr = d3.format("$,");
+
 d3.csv('data.csv').then(function (csvData) {
   // console.log(csvData);
 
   let overall = {
-    title: 'Overall',
+    title: 'Country Aid by Year (1973-2013)',
     total: 0,
     donors: {},
     recipients: {}
@@ -36,6 +39,8 @@ d3.csv('data.csv').then(function (csvData) {
     addToTotal(d2.donors, d1.donor, amount);
     addToTotal(d2.recipients, d1.recipient, amount);
   }
+
+ 
 
   overall.donors = mapToSortedArray(overall.donors);
   overall.recipients = mapToSortedArray(overall.recipients);
@@ -93,12 +98,12 @@ function buildChart(overall, data) {
     .attr('id', 'gradient');
 
   gradient.append('stop')
-    .attr('offset', '75%')
-    .attr('stop-color', '#FF9133');
+    .attr('offset', '65%')
+    .attr('stop-color', 'lightblue');
 
   gradient.append('stop')
     .attr('offset', '100%')
-    .attr('stop-color', '#FF0015');
+    .attr('stop-color', 'steelblue');
 
 
   let base = svg.append('g')
@@ -134,8 +139,8 @@ function buildChart(overall, data) {
 
   base.append('path')
     .attr('d', pathData)
-    // .style('fill', 'url(#gradient)');
-    .style('fill', 'steelblue');
+    .style('fill', 'url(#gradient)');
+    // .style('fill', 'steelblue');
 
   const textRadius = innerRadius - 20;
 
@@ -152,26 +157,29 @@ function buildChart(overall, data) {
       let y = Math.sin(d.angle) * textRadius;
       let rotate = (d.angle * (180 / Math.PI)) + 90;
       return `translate(${x},${y}) rotate(${rotate})`;
-    });
+    })
+    .style('font-size', '10px');
 
   let centerGroup = base.append('g');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
     .text(overall.title)
-    .attr('transform', 'translate(0, -200)');
+    .attr('transform', 'translate(0, -200)')
+    .style('font-size', '18px');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
-    .text(`Donated: ${overall.total}`)
-    .attr('transform', 'translate(0, -170)');
+    .text(`Donated: ${curr(overall.total)}`)
+    .attr('transform', 'translate(0, -170)')
+    .style('font-size', '18px');
 
   createMajorDonors(centerGroup, overall.donors.slice(0, 5));
-  createMajorRecipients(centerGroup, overall.recipients.slice(0, 3));
+  createMajorRecipients(centerGroup, overall.recipients.slice(0, 5));
 }
 
 function createMajorDonors(centerGroup, donors) {
-  const width = 500;
+  const width = 400;
   const deltaX = width / donors.length;
   const startX = -(width / 2) + (0.5 * deltaX);
 
@@ -181,7 +189,8 @@ function createMajorDonors(centerGroup, donors) {
   majorDonors.append('text')
     .attr('text-anchor', 'middle')
     .text('Major Donors')
-    .attr('transform', 'translate(0, -30)');
+    .attr('transform', 'translate(0, -30)')
+    .style('font-size', '14px');
 
   let donor = majorDonors.selectAll('g')
     .data(donors)
@@ -198,8 +207,8 @@ function createMajorDonors(centerGroup, donors) {
 
   donor.append('text')
     .attr('text-anchor', 'middle')
-    .text(d => d.total)
-    .attr('transform', 'translate(0, 30)');
+    .text(d => '$' + format(d.total))
+    .attr('transform', 'translate(0, 20)');
 
   const maxRadius = 30;
 
@@ -212,12 +221,13 @@ function createMajorDonors(centerGroup, donors) {
   donor.append('circle')
     .attr('fill', 'green')
     .attr('cy', maxRadius + 40)
-    .attr('r', d => radius(d.total));
+    .attr('r', d => radius(d.total))
+    .attr('transform', 'translate(0, -10)');
 }
 
 function createMajorRecipients(centerGroup, recipients) {
   const startY = 0;
-  const deltaY = 40;
+  const deltaY = 22;
 
   let majorRecipients = centerGroup.append('g')
     .attr('transform', 'translate(0, 100)');
@@ -225,7 +235,8 @@ function createMajorRecipients(centerGroup, recipients) {
   majorRecipients.append('text')
     .attr('text-anchor', 'middle')
     .text('Major Recipients')
-    .attr('transform', 'translate(0, -30)');
+    .attr('transform', 'translate(0, -30)')
+    .style('font-size', '14px');
 
   let recipient = majorRecipients.selectAll('g')
     .data(recipients)
@@ -233,7 +244,7 @@ function createMajorRecipients(centerGroup, recipients) {
     .append('g')
     .attr('transform', function (d, i) {
       let y = startY + (i * deltaY);
-      return `translate(-170, ${y})`;
+      return `translate(-140, ${y})`;
     });
 
   recipient.append('text')
@@ -250,9 +261,14 @@ function createMajorRecipients(centerGroup, recipients) {
     .range([0, maxBarWidth]);
 
   recipient.append('rect')
-    .attr('fill', 'grey')
-    .attr('x', 80)
+    .attr('fill', 'lightgrey')
+    .attr('x', 20)
     .attr('width', d => width(d.total))
     .attr('y', -6 -(barHeight / 2))
-    .attr('height', barHeight);
+    .attr('height', barHeight)
+    .attr('rx','3')
+    .attr('ry','3');
 }
+
+
+
