@@ -1,5 +1,6 @@
-let format = d3.format(".2s"),
-    curr = d3.format("$,");
+let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
+    curr = d3.format("$,"),
+    base;
 
 d3.csv('data.csv').then(function (csvData) {
   // console.log(csvData);
@@ -106,7 +107,7 @@ function buildChart(overall, data) {
     .attr('stop-color', 'steelblue');
 
 
-  let base = svg.append('g')
+  base = svg.append('g')
     .attr('class', 'base-group')
     .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
 
@@ -160,26 +161,45 @@ function buildChart(overall, data) {
     })
     .style('font-size', '10px');
 
-  let centerGroup = base.append('g');
+  buildCenterStuff(overall);
+
+  base.append('circle')
+    .attr('r', width/3.4)
+    .attr('stroke', '#eee')
+    .attr('stroke-width', 5)
+    .attr('fill', 'none')
+    .attr('stroke-dasharray', 2);
+
+  buildInvisibleDonut(data,width,height);
+}
+
+
+function buildCenterStuff(stuff) {
+
+  base.select('.center-group').remove();
+
+  let centerGroup = base.append('g')
+    .attr('class', 'center-group');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
-    .text(overall.title)
+    .text(stuff.title)
     .attr('transform', 'translate(0, -180)')
     .style('font-size', '18px')
     .style('font-weight', '700');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
-    .text(`Donated: ${curr(overall.total)}`)
+    .text(`Donated: ${curr(stuff.total)}`)
     .attr('transform', 'translate(0, -150)')
     .style('font-size', '14px');
 
-  createMajorDonors(centerGroup, overall.donors.slice(0, 5));
-  createMajorRecipients(centerGroup, overall.recipients.slice(0, 5));
+  createMajorDonors(centerGroup, stuff.donors.slice(0, 5));
+  createMajorRecipients(centerGroup, stuff.recipients.slice(0, 5));
 }
 
 function createMajorDonors(centerGroup, donors) {
+
   const width = 400;
   const deltaX = width / donors.length;
   const startX = -(width / 2) + (0.5 * deltaX);
@@ -271,6 +291,50 @@ function createMajorRecipients(centerGroup, recipients) {
     .attr('height', barHeight)
     .attr('rx','3')
     .attr('ry','3');
+}
+
+function buildInvisibleDonut(data,width,height) {
+
+  let thickness = 160;
+  let radius = width / 2 + 8; //cutting off the right part of donut
+
+  let arc = d3.arc()
+    // .startAngle(-1 * Math.PI / 2)
+    .innerRadius(radius - thickness)
+    .outerRadius(radius);
+
+  let pie = d3.pie()
+    // .startAngle(-1 * Math.PI / 2)
+    .value(d => d.year)
+    .sort(null);
+
+  let donut = base.append('g')
+    .attr('id','invisible-donut')
+    .attr('transform', 'rotate(-3.5)');
+
+  let path = donut.selectAll('path')
+    .data(pie(data))
+    .enter()
+    .append('g')
+    .append('path')
+    .attr('d', arc)
+    // .attr('fill', (d,i) => color(i));
+    .style('fill', 'white')
+    .style('fill-opacity', '0')
+    .on("mouseover", function(d) {
+      d3.select(this)     
+        .style("cursor", "pointer")
+        .style("fill", "white")
+        .style('fill-opacity', '0.3');
+
+      buildCenterStuff(d.data);
+    })
+    .on("mouseout", function(d) {
+      d3.select(this)
+        .style("cursor", "none")  
+        .style('fill-opacity', '0');
+    })
+    .each(function(d, i) { this._current = i; });
 }
 
 
