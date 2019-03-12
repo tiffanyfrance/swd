@@ -271,26 +271,33 @@ function createMajorRecipients(centerGroup, recipients) {
     });
 
   recipient.append('text')
-    // .attr('text-anchor', 'middle')
-    .text(d => d.name);
+    .attr('text-anchor', 'end')
+    .text(d => d.name)
+    .attr('transform', 'translate(50, 0)');
 
-  const maxBarWidth = 260;
+  const maxBarWidth = 250;
   const barHeight = 20;
 
   let maxTotal = d3.max(recipients, d => d.total);
 
   let width = d3.scaleLinear()
     .domain([0, maxTotal])
+    // .domain([0, 11000000000])
     .range([0, maxBarWidth]);
 
   recipient.append('rect')
     .attr('fill', 'lightgrey')
-    .attr('x', 20)
+    .attr('x', 60)
     .attr('width', d => width(d.total))
     .attr('y', -6 -(barHeight / 2))
     .attr('height', barHeight)
     .attr('rx','3')
     .attr('ry','3');
+
+  recipient.append('text')
+    // .attr('text-anchor', 'end')
+    .text(d => '$' + format(d.total))
+    .attr('transform', (d) => `translate(${65 + width(d.total)}, -2)`);
 }
 
 function buildInvisibleDonut(data,width,height) {
