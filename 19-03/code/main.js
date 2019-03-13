@@ -2,6 +2,9 @@ let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     curr = d3.format("$,"),
     base;
 
+const RED_SHADES = ['#DE4832','#E36F5F','#EFA798','#F0B1A4','#F4C5BC'];
+const GREEN_SHADES = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6'];
+
 d3.csv('data.csv').then(function (csvData) {
   // console.log(csvData);
 
@@ -9,7 +12,9 @@ d3.csv('data.csv').then(function (csvData) {
     title: 'Country Aid by Year (1973-2013)',
     total: 0,
     donors: {},
-    recipients: {}
+    recipients: {},
+    donorColors: RED_SHADES,
+    recipientColor: '#aaa'
   };
 
   let dataMap = {};
@@ -27,9 +32,12 @@ d3.csv('data.csv').then(function (csvData) {
       d2 = {
         title: d1.year,
         year: d1.year,
+        maxTotal: 10000000000,
         total: 0,
         donors: {},
-        recipients: {}
+        recipients: {},
+        donorColors: GREEN_SHADES,
+        recipientColor: 'lightgrey'
       };
 
       dataMap[d1.year] = d2;
@@ -41,11 +49,6 @@ d3.csv('data.csv').then(function (csvData) {
     addToTotal(d2.recipients, d1.recipient, amount);
   }
 
- 
-
-  overall.donors = mapToSortedArray(overall.donors);
-  overall.recipients = mapToSortedArray(overall.recipients);
-
   let data = [];
 
   for (let year in dataMap) {
@@ -56,6 +59,10 @@ d3.csv('data.csv').then(function (csvData) {
 
     data.push(d);
   }
+
+  overall.donors = mapToSortedArray(overall.donors);
+  overall.recipients = mapToSortedArray(overall.recipients);
+  overall.maxTotal = d3.max(overall.recipients, d => d.total);
 
   buildChart(overall, data);
 });
@@ -164,13 +171,13 @@ function buildChart(overall, data) {
   buildCenterStuff(overall);
 
   base.append('circle')
-    .attr('r', width/3.4)
+    .attr('r', 260)
     .attr('stroke', '#eee')
     .attr('stroke-width', 5)
     .attr('fill', 'none')
     .attr('stroke-dasharray', 2);
 
-  buildInvisibleDonut(data,width,height);
+  buildInvisibleDonut(data,width,height,overall);
 }
 
 
@@ -184,28 +191,29 @@ function buildCenterStuff(stuff) {
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
     .text(stuff.title)
-    .attr('transform', 'translate(0, -180)')
+    .attr('transform', 'translate(0, -190)')
     .style('font-size', '18px')
     .style('font-weight', '700');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
     .text(`Donated: ${curr(stuff.total)}`)
-    .attr('transform', 'translate(0, -150)')
-    .style('font-size', '14px');
+    .attr('transform', 'translate(0, -160)')
+    .style('font-size', '14px')
+    .style('font-weight', 500);
 
-  createMajorDonors(centerGroup, stuff.donors.slice(0, 5));
-  createMajorRecipients(centerGroup, stuff.recipients.slice(0, 5));
+  createMajorDonors(centerGroup, stuff.donors.slice(0, 5), stuff.maxTotal, stuff.donorColors);
+  createMajorRecipients(centerGroup, stuff.recipients.slice(0, 5), stuff.maxTotal, stuff.recipientColor);
 }
 
-function createMajorDonors(centerGroup, donors) {
+function createMajorDonors(centerGroup, donors, maxTotal, colors) {
 
   const width = 400;
   const deltaX = width / donors.length;
   const startX = -(width / 2) + (0.5 * deltaX);
 
   let majorDonors = centerGroup.append('g')
-    .attr('transform', 'translate(0, -60)');
+    .attr('transform', 'translate(0, -70)');
 
   majorDonors.append('text')
     .attr('text-anchor', 'middle')
@@ -231,29 +239,34 @@ function createMajorDonors(centerGroup, donors) {
     .text(d => '$' + format(d.total))
     .attr('transform', 'translate(0, 15)');
 
-  const maxRadius = 30;
+  const maxRadius = 60;
 
-  let maxTotal = d3.max(donors, d => d.total);
+  // let maxTotal = d3.max(donors, d => d.total);
 
-  let radius = d3.scaleLinear()
+  // let radius = d3.scaleLinear()
+  //   // .domain([0, maxTotal])
+  //   .domain([0, 11000000000])
+  //   .range([0, maxRadius]);
+
+  let radius = d3.scalePow()
+    .exponent(0.5)
     .domain([0, maxTotal])
+    // .domain([0, 11000000000])
     .range([0, maxRadius]);
 
-  let greenShades = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6']
-
   donor.append('circle')
-    .attr('fill', (d,i) => greenShades[i])
+    .attr('fill', (d,i) => colors[i])
     .attr('cy', maxRadius + 40)
     .attr('r', d => radius(d.total))
     .attr('transform', 'translate(0, -15)');
 }
 
-function createMajorRecipients(centerGroup, recipients) {
+function createMajorRecipients(centerGroup, recipients, maxTotal, color) {
   const startY = 0;
   const deltaY = 22;
 
   let majorRecipients = centerGroup.append('g')
-    .attr('transform', 'translate(0, 100)');
+    .attr('transform', 'translate(0, 110)');
 
   majorRecipients.append('text')
     .attr('text-anchor', 'middle')
@@ -278,15 +291,19 @@ function createMajorRecipients(centerGroup, recipients) {
   const maxBarWidth = 250;
   const barHeight = 20;
 
-  let maxTotal = d3.max(recipients, d => d.total);
+  // let maxTotal = d3.max(recipients, d => d.total);
 
-  let width = d3.scaleLinear()
+  // let width = d3.scaleLinear()
+  //   .domain([0, maxTotal])
+  //   .range([0, maxBarWidth]);
+
+  let width = d3.scalePow()
+    .exponent(0.5)
     .domain([0, maxTotal])
-    // .domain([0, 11000000000])
     .range([0, maxBarWidth]);
 
   recipient.append('rect')
-    .attr('fill', 'lightgrey')
+    .attr('fill', color)
     .attr('x', 60)
     .attr('width', d => width(d.total))
     .attr('y', -6 -(barHeight / 2))
@@ -300,10 +317,10 @@ function createMajorRecipients(centerGroup, recipients) {
     .attr('transform', (d) => `translate(${65 + width(d.total)}, -2)`);
 }
 
-function buildInvisibleDonut(data,width,height) {
+function buildInvisibleDonut(data,width,height,overall) {
 
   let thickness = 160;
-  let radius = width / 2 + 8; //cutting off the right part of donut
+  let radius = 458; //cutting off the right part of donut
 
   let arc = d3.arc()
     // .startAngle(-1 * Math.PI / 2)
@@ -318,6 +335,8 @@ function buildInvisibleDonut(data,width,height) {
   let donut = base.append('g')
     .attr('id','invisible-donut')
     .attr('transform', 'rotate(-3.5)');
+
+  let lastHoveredData = null;
 
   let path = donut.selectAll('path')
     .data(pie(data))
@@ -335,11 +354,16 @@ function buildInvisibleDonut(data,width,height) {
         .style('fill-opacity', '0.3');
 
       buildCenterStuff(d.data);
+      lastHoveredData = d.data;
     })
     .on("mouseout", function(d) {
       d3.select(this)
         .style("cursor", "none")  
         .style('fill-opacity', '0');
+
+      if(lastHoveredData === d.data) {
+        buildCenterStuff(overall);
+      }
     })
     .each(function(d, i) { this._current = i; });
 }
