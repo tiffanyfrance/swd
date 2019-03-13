@@ -2,7 +2,7 @@ let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     curr = d3.format("$,"),
     base;
 
-const RED_SHADES = ['#DE4832','#E36F5F','#EFA798','#F0B1A4','#F4C5BC'];
+const BLUE_SHADES = ['#4983B5','#639AC2','#78ACCC','#8DBDD7','#ACD7E6'];
 const GREEN_SHADES = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6'];
 
 d3.csv('data.csv').then(function (csvData) {
@@ -13,7 +13,7 @@ d3.csv('data.csv').then(function (csvData) {
     total: 0,
     donors: {},
     recipients: {},
-    donorColors: RED_SHADES,
+    donorColors: BLUE_SHADES,
     recipientColor: '#aaa'
   };
 
@@ -367,6 +367,4 @@ function buildInvisibleDonut(data,width,height,overall) {
     })
     .each(function(d, i) { this._current = i; });
 }
-
-
 
