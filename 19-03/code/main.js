@@ -3,13 +3,86 @@ let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     base;
 
 const BLUE_SHADES = ['#4983B5','#639AC2','#78ACCC','#8DBDD7','#ACD7E6'];
+// const BLUE_SHADES = ['#888','#999','#aaa','#ccc','#ddd'];
 const GREEN_SHADES = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6'];
 
-d3.csv('data.csv').then(function (csvData) {
+d3.csv('data.csv').then(csvData => {
+  foo(csvData);
+  bar(csvData);
+});
+
+function bar(csvData) {
+  for(let d of csvData) {
+    let category = categories.find(c => d.coalesced_purpose_code.startsWith(c.prefix));
+
+    let amount = +d.commitment_amount_usd_constant;
+
+    category.total += amount;
+  }
+
+  for(let c of categories) {
+    c.count = Math.round(c.total / 100000000);
+  }
+
+  console.log(categories.filter(c => c.count > 0));
+
+  categories = categories.filter(c => c.count > 0);
+
+  // base.append('text')
+  //   .text('YOOOOOO')
+  //   .attr('x', -700)
+
+  // for (var i = 0; i < categories.length; i++) {
+  //   let item = categories[i];
+
+    let catBlock = base.selectAll('.subject-header')
+      .data(categories)
+      .enter();
+
+    catBlock.each(function(d) {
+
+      let str = '';
+
+      for (var i = 0; i < d.count; i++) {
+        str += '$ ';
+      }
+
+      let foriegnObj = base.append('foreignObject')
+        .attr('x', d.x)
+        .attr('y', d.y)
+        .attr("width", d.w)
+        .attr("height", d.h)
+        .append("xhtml:div")
+        .html(`
+          <h2>${d.name}</h2>
+          <p>${str}</p>
+          `);
+
+    });
+
+  //   if (i < 11) {
+  //     $('.left').append(`<h2>${item.name}</h2>`);
+
+  //     for (var j = 0; j < item.count; j++) {
+  //       $('.left').append('$ ');
+  //     }
+
+  //   } else {
+  //     $('.right').append(`<h2>${item.name}</h2>`);
+
+  //     for (var j = 0; j < item.count; j++) {
+  //       $('.right').append('$ ');
+  //     }
+  //   }
+  // }
+
+}
+
+function foo(csvData) {
   // console.log(csvData);
 
   let overall = {
-    title: 'Country Aid by Year (1973-2013)',
+    title: 'All Years (1973-2013)',
     total: 0,
     donors: {},
     recipients: {},
@@ -64,8 +137,8 @@ d3.csv('data.csv').then(function (csvData) {
   overall.recipients = mapToSortedArray(overall.recipients);
   overall.maxTotal = d3.max(overall.recipients, d => d.total);
 
-  buildChart(overall, data);
-});
+  buildMainChart(overall, data);
+}
 
 function addToTotal(map, name, amount) {
   let value = map[name];
@@ -94,7 +167,7 @@ function mapToSortedArray(map) {
   return array;
 }
 
-function buildChart(overall, data) {
+function buildMainChart(overall, data) {
   console.log(overall);
 
   let svg = d3.select('#mainChart'),
@@ -180,7 +253,6 @@ function buildChart(overall, data) {
   buildInvisibleDonut(data,width,height,overall);
 }
 
-
 function buildCenterStuff(stuff) {
 
   base.select('.center-group').remove();
@@ -192,8 +264,7 @@ function buildCenterStuff(stuff) {
     .attr('text-anchor', 'middle')
     .text(stuff.title)
     .attr('transform', 'translate(0, -190)')
-    .style('font-size', '18px')
-    .style('font-weight', '700');
+    .style('font-size', '18px');
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')

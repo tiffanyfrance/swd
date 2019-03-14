@@ -6,8 +6,9 @@
   <title>SWD March 2019</title>
   <link rel="icon" type="image/x-icon" href="favicon_64x64.ico" />
 
-
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.min.js"></script>
+  <script src="categories.js"></script>
   <script src="main.js"></script>
 
   <link rel="stylesheet" type="text/css"
@@ -24,11 +25,12 @@
 
     html,
     body {
-      width: 100%;
+      /*width: 100%;
       height: 100%;
       margin: 0;
       border: 0;
       outline: 0;
+      overflow: scroll;*/
     }
 
     body {
@@ -36,11 +38,33 @@
       align-items: center;
       justify-content: center;
     }
+
+    .container {
+      min-width: 1440px;
+    }
+
+    h2 {
+      font-weight: 300;
+    }
+
+    p {
+      color: #ccc;
+      /*color: #20B01A;*/
+    }
+
+    svg {
+      width: 100%;
+    }
   </style>
 </head>
 
 <body>
-  <svg id="mainChart" width="900" height="900"></svg>
+  <div class="container">
+    <div style="margin: 20px 20px 50px;text-align: center;">
+      <h1 style="font-weight: 500;font-size: 34px;">Country Aid by Year (1973-2013)</h1>
+    </div>
+    <svg id="mainChart" width="1440" height="810"></svg>
+  </div>
 </body>
 
 </html>
