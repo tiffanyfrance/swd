@@ -245,7 +245,8 @@ function buildCenterStuff(stuff) {
     .attr('text-anchor', 'middle')
     .text(stuff.title)
     .attr('transform', 'translate(0, -190)')
-    .style('font-size', '18px');
+    .style('font-size', '18px')
+    .style('font-weight', 500);
 
   centerGroup.append('text')
     .attr('text-anchor', 'middle')
