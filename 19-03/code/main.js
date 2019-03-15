@@ -193,8 +193,6 @@ function mapToSortedArray(map) {
 }
 
 function buildMainChart(overall, data) {
-  console.log(overall);
-
   let theta = (2 * Math.PI) / data.length;
   let startAngle = -1 * Math.PI / 2;
 
@@ -209,8 +207,6 @@ function buildMainChart(overall, data) {
     d.angle = startAngle + theta * i;
     d.radius = radius(d.total);
   }
-
-  console.log(data);
 
   let areaGenerator = d3.areaRadial()
     .curve(d3.curveBasisClosed)

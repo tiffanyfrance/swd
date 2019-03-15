@@ -46,10 +46,13 @@
       font-weight: 300;
     }
 
+    .container {
+      position: relative;
+    }
+
     .categories p, .categories span {
       color: #ddd;
       font-weight: 700;
-      /*font-size: 4px;*/
     }
 
     .header {
@@ -80,9 +83,15 @@
     .triangle {
       position: absolute;
       top: 546px;
-      left: 554px;
+      left: 434px;
       transform: rotate(-5deg);
       color: #999;
+    }
+
+    @media (max-width: 1400px) {
+      .container {
+        zoom: 60%;
+      }
     }
   </style>
 </head>
