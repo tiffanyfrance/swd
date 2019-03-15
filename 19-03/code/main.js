@@ -54,7 +54,7 @@ function buildCategories(csvData) {
     }
   }
 
-  categories = categories.filter(c => c.count > 10);
+  categories = categories.filter(c => c.count > 0);
 
   categoriesBase = base.append('g')
     .attr('class', 'categories');
@@ -107,7 +107,7 @@ function createChart(csvData) {
   // console.log(csvData);
 
   let overall = {
-    title: 'All Years (1973-2013)',
+    title: 'Country Aid for All Years (1973-2013)',
     total: 0,
     donors: {},
     recipients: {},
@@ -387,7 +387,7 @@ function buildInvisibleDonut(data,thickness,radius,overall,color) {
 
   let donut = base.append('g')
     .attr('id','invisible-donut')
-    .attr('transform', 'rotate(-3.5)');
+    .attr('transform', 'rotate(-93.5)');
 
   let lastHoveredData = null;
 
@@ -424,6 +424,7 @@ function buildInvisibleDonut(data,thickness,radius,overall,color) {
 
 function buildYears(data) {
   base.append('g')
+    .attr('transform', 'rotate(-90)')
     .selectAll('text.year')
     .data(data)
     .enter()
