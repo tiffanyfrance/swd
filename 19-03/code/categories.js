@@ -113,16 +113,16 @@ var categories = [
     total: 0,
     x: 430,
     y: -60,
-    w: 260,
+    w: 280,
     h: 300
   },
   {
     prefix: '33',
     name: 'Trade policy and regulations',
     total: 0,
-    x: 575,
-    y: 140,
-    w: 110,
+    x: 595,
+    y: 120,
+    w: 120,
     h: 300
   },
   {
@@ -131,7 +131,7 @@ var categories = [
     total: 0,
     x: 530,
     y: -410,
-    w: 160,
+    w: 180,
     h: 300
   },
   {
@@ -149,24 +149,24 @@ var categories = [
     total: 0,
     x: 575,
     y: -270,
-    w: 110,
+    w: 130,
     h: 300
   },
   {
     prefix: '51',
     name: 'General budget support',
     total: 0,
-    x: 370,
-    y: -225,
-    w: 190,
+    x: 390,
+    y: -230,
+    w: 170,
     h: 300
   },
   {
     prefix: '52',
     name: 'Food aid/Food security programmes',
     total: 0,
-    x: 380,
-    y: 140,
+    x: 400,
+    y: 120,
     w: 180,
     h: 300
   },
@@ -183,23 +183,23 @@ var categories = [
     prefix: '6',
     name: 'Action relating to debt',
     total: 0,
-    x: 320,
-    y: 230,
-    w: 360,
+    x: 340,
+    y: 290,
+    w: 370,
     h: 300
   },
   {
     prefix: '7',
     name: 'Emergency Assistance and Reconstruction',
     total: 0,
-    x: 320,
-    y: 340,
+    x: 400,
+    y: 200,
     w: 100,
     h: 300
   },
   {
     prefix: '91',
-    name: 'Administrative costs',
+    name: 'Admin costs',
     total: 0,
     x: 460,
     y: -130,
@@ -210,7 +210,7 @@ var categories = [
     prefix: '92',
     name: 'Support NGO\'s / government orgs',
     total: 0,
-    x: 575,
+    x: 530,
     y: -130,
     w: 100,
     h: 300
@@ -219,8 +219,8 @@ var categories = [
     prefix: '93',
     name: 'Refugees in Donor Countries',
     total: 0,
-    x: 440,
-    y: 340,
+    x: 620,
+    y: -130,
     w: 100,
     h: 300
   },
@@ -228,9 +228,9 @@ var categories = [
     prefix: '9981',
     name: 'Sectors not specified',
     total: 0,
-    x: 550,
-    y: 340,
-    w: 140,
+    x: 530,
+    y: 200,
+    w: 180,
     h: 300
   },
   {

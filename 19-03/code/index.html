@@ -48,8 +48,13 @@
     }
 
     p {
-      color: #ccc;
+      color: #eee;
+      font-weight: 700;
       /*color: #20B01A;*/
+    }
+
+    .header p, .header p * {
+      color: #999;
     }
 
     svg {
@@ -60,10 +65,14 @@
 
 <body>
   <div class="container">
-    <div style="margin: 20px 20px 50px;text-align: center;">
+    <div style="margin: 20px 20px 30px;text-align: center;" class="header">
       <h1 style="font-weight: 500;font-size: 34px;">Country Aid by Year (1973-2013)</h1>
+      <p class="subtitle">
+        <span style="padding-right: 20px;">$ = $10,000</span> 
+        <span>* circles and bars calculated with 0.5 exponent</span>
+    </p>
     </div>
-    <svg id="mainChart" width="1440" height="810"></svg>
+    <svg id="mainChart" width="1440" height="810" viewBox="0 0 1440 810"></svg>
   </div>
 </body>
 

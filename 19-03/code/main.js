@@ -2,16 +2,19 @@ let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     curr = d3.format("$,"),
     base;
 
+const innerRadius = 300;
+const textRadius = innerRadius - 20;
+
 const BLUE_SHADES = ['#4983B5','#639AC2','#78ACCC','#8DBDD7','#ACD7E6'];
 // const BLUE_SHADES = ['#888','#999','#aaa','#ccc','#ddd'];
 const GREEN_SHADES = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6'];
 
 d3.csv('data.csv').then(csvData => {
-  foo(csvData);
-  bar(csvData);
+  createChart(csvData);
+  buildCategories(csvData);
 });
 
-function bar(csvData) {
+function buildCategories(csvData) {
   for(let d of csvData) {
     let category = categories.find(c => d.coalesced_purpose_code.startsWith(c.prefix));
 
@@ -28,57 +31,37 @@ function bar(csvData) {
 
   categories = categories.filter(c => c.count > 0);
 
-  // base.append('text')
-  //   .text('YOOOOOO')
-  //   .attr('x', -700)
+  let catBlock = base.selectAll('.subject-header')
+    .data(categories)
+    .enter();
 
-  // for (var i = 0; i < categories.length; i++) {
-  //   let item = categories[i];
-
-    let catBlock = base.selectAll('.subject-header')
-      .data(categories)
-      .enter();
-
-    catBlock.each(function(d) {
-
-      let str = '';
-
-      for (var i = 0; i < d.count; i++) {
-        str += '$ ';
-      }
-
-      let foriegnObj = base.append('foreignObject')
-        .attr('x', d.x)
-        .attr('y', d.y)
-        .attr("width", d.w)
-        .attr("height", d.h)
-        .append("xhtml:div")
-        .html(`
-          <h2>${d.name}</h2>
-          <p>${str}</p>
-          `);
-
-    });
-
-  //   if (i < 11) {
-  //     $('.left').append(`<h2>${item.name}</h2>`);
-
-  //     for (var j = 0; j < item.count; j++) {
-  //       $('.left').append('$ ');
-  //     }
-
-  //   } else {
-  //     $('.right').append(`<h2>${item.name}</h2>`);
-
-  //     for (var j = 0; j < item.count; j++) {
-  //       $('.right').append('$ ');
-  //     }
-  //   }
-  // }
-
+  buildDollars(catBlock);
 }
 
-function foo(csvData) {
+function buildDollars(catBlock) {
+  catBlock.each(function(d) {
+
+    let str = '';
+
+    for (var i = 0; i < d.count; i++) {
+      str += '$ ';
+    }
+
+    let foreignObj = base.append('foreignObject')
+      .attr('x', d.x)
+      .attr('y', d.y)
+      .attr("width", d.w)
+      .attr("height", d.h)
+      .append("xhtml:div")
+      .html(`
+        <h2>${d.name}</h2>
+        <p>${str}</p>
+        `);
+
+  });
+}
+
+function createChart(csvData) {
   // console.log(csvData);
 
   let overall = {
@@ -208,8 +191,6 @@ function buildMainChart(overall, data) {
 
   console.log(data);
 
-  const innerRadius = 300;
-
   let areaGenerator = d3.areaRadial()
     .curve(d3.curveBasisClosed)
     .angle(d => d.angle)
@@ -223,24 +204,6 @@ function buildMainChart(overall, data) {
     .style('fill', 'url(#gradient)');
     // .style('fill', 'steelblue');
 
-  const textRadius = innerRadius - 20;
-
-  base.append('g')
-    .selectAll('text.year')
-    .data(data)
-    .enter()
-    .append('text')
-    .attr('class', 'year')
-    .attr('text-anchor', 'middle')
-    .text(d => d.year)
-    .attr('transform', function (d, i) {
-      let x = Math.cos(d.angle) * textRadius;
-      let y = Math.sin(d.angle) * textRadius;
-      let rotate = (d.angle * (180 / Math.PI)) + 90;
-      return `translate(${x},${y}) rotate(${rotate})`;
-    })
-    .style('font-size', '10px');
-
   buildCenterStuff(overall);
 
   base.append('circle')
@@ -250,7 +213,8 @@ function buildMainChart(overall, data) {
     .attr('fill', 'none')
     .attr('stroke-dasharray', 2);
 
-  buildInvisibleDonut(data,width,height,overall);
+  buildYears(data);
+  buildInvisibleDonut(data,200,460,overall,'white');
 }
 
 function buildCenterStuff(stuff) {
@@ -388,10 +352,7 @@ function createMajorRecipients(centerGroup, recipients, maxTotal, color) {
     .attr('transform', (d) => `translate(${65 + width(d.total)}, -2)`);
 }
 
-function buildInvisibleDonut(data,width,height,overall) {
-
-  let thickness = 160;
-  let radius = 458; //cutting off the right part of donut
+function buildInvisibleDonut(data,thickness,radius,overall,color) {
 
   let arc = d3.arc()
     // .startAngle(-1 * Math.PI / 2)
@@ -416,12 +377,12 @@ function buildInvisibleDonut(data,width,height,overall) {
     .append('path')
     .attr('d', arc)
     // .attr('fill', (d,i) => color(i));
-    .style('fill', 'white')
+    .style('fill', color)
     .style('fill-opacity', '0')
     .on("mouseover", function(d) {
       d3.select(this)     
         .style("cursor", "pointer")
-        .style("fill", "white")
+        .style("fill", color)
         .style('fill-opacity', '0.3');
 
       buildCenterStuff(d.data);
@@ -437,5 +398,23 @@ function buildInvisibleDonut(data,width,height,overall) {
       }
     })
     .each(function(d, i) { this._current = i; });
+}
+
+function buildYears(data) {
+  base.append('g')
+    .selectAll('text.year')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('class', 'year')
+    .attr('text-anchor', 'middle')
+    .text(d => d.year)
+    .attr('transform', function (d, i) {
+      let x = Math.cos(d.angle) * textRadius;
+      let y = Math.sin(d.angle) * textRadius;
+      let rotate = (d.angle * (180 / Math.PI)) + 90;
+      return `translate(${x},${y}) rotate(${rotate})`;
+    })
+    .style('font-size', '10px');
 }
 
