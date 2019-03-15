@@ -1,16 +1,36 @@
 let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     curr = d3.format("$,"),
     base,
-    catBlock;
+    categoriesBase;
 
 const innerRadius = 300;
 const textRadius = innerRadius - 20;
 
 const BLUE_SHADES = ['#4983B5','#639AC2','#78ACCC','#8DBDD7','#ACD7E6'];
-// const BLUE_SHADES = ['#888','#999','#aaa','#ccc','#ddd'];
 const GREEN_SHADES = ['#20B01A','#41C558','#92DD79','#9EE287','#B7E9A6'];
 
 d3.csv('data.csv').then(csvData => {
+  let svg = d3.select('#mainChart'),
+    width = +svg.attr('width'),
+    height = +svg.attr('height');
+
+  let gradient = svg.append('defs')
+    .append('radialGradient')
+    .attr('id', 'gradient');
+
+  gradient.append('stop')
+    .attr('offset', '65%')
+    .attr('stop-color', 'lightblue');
+
+  gradient.append('stop')
+    .attr('offset', '100%')
+    .attr('stop-color', 'steelblue');
+
+
+  base = svg.append('g')
+    .attr('class', 'base-group')
+    .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
+
   createChart(csvData);
   buildCategories(csvData);
 });
@@ -18,37 +38,58 @@ d3.csv('data.csv').then(csvData => {
 function buildCategories(csvData) {
   for(let d of csvData) {
     let category = categories.find(c => d.coalesced_purpose_code.startsWith(c.prefix));
-
     let amount = +d.commitment_amount_usd_constant;
 
     category.total += amount;
+    category.totalByYear[d.year] += amount;
   }
 
   for(let c of categories) {
     c.count = Math.round(c.total / 100000000);
+
+    c.countByYear = {};
+
+    for(let year in c.totalByYear) {
+      c.countByYear[year] = Math.round(c.totalByYear[year] / 100000000);
+    }
   }
 
-  console.log(categories.filter(c => c.count > 0));
+  categories = categories.filter(c => c.count > 10);
 
-  categories = categories.filter(c => c.count > 0);
-
-  catBlock = base.selectAll('.subject-header')
-    .data(categories)
-    .enter();
+  categoriesBase = base.append('g')
+    .attr('class', 'categories');
 
   buildDollars();
 }
 
-function buildDollars() {
+function buildDollars(year) {
+  categoriesBase.selectAll('.category').remove();
+
+  let catBlock = categoriesBase.selectAll('.category')
+    .data(categories)
+    .enter();
+
   catBlock.each(function(d) {
+    let yearCount = 0;
+
+    if(year) {
+      yearCount = d.countByYear[year];
+    }
+
+    let yearStr = '';
+
+    for (var i = 0; i < yearCount; i++) {
+      yearStr += '$ ';
+    }
 
     let str = '';
 
-    for (var i = 0; i < d.count; i++) {
+    for (var i = 0; i < (d.count - yearCount); i++) {
       str += '$ ';
     }
 
-    let foreignObj = base.append('foreignObject')
+    let foreignObj = categoriesBase.append('foreignObject')
+      .attr('class', 'category')
       .attr('x', d.x)
       .attr('y', d.y)
       .attr("width", d.w)
@@ -56,7 +97,7 @@ function buildDollars() {
       .append("xhtml:div")
       .html(`
         <h2>${d.name}</h2>
-        <p>${str}</p>
+        <p><span style="color: green;">${yearStr}</span>${str}</p>
         `);
 
   });
@@ -153,27 +194,6 @@ function mapToSortedArray(map) {
 
 function buildMainChart(overall, data) {
   console.log(overall);
-
-  let svg = d3.select('#mainChart'),
-    width = +svg.attr('width'),
-    height = +svg.attr('height');
-
-  let gradient = svg.append('defs')
-    .append('radialGradient')
-    .attr('id', 'gradient');
-
-  gradient.append('stop')
-    .attr('offset', '65%')
-    .attr('stop-color', 'lightblue');
-
-  gradient.append('stop')
-    .attr('offset', '100%')
-    .attr('stop-color', 'steelblue');
-
-
-  base = svg.append('g')
-    .attr('class', 'base-group')
-    .attr('transform', `translate(${(width / 2)}, ${(height / 2)})`);
 
   let theta = (2 * Math.PI) / data.length;
   let startAngle = -1 * Math.PI / 2;
@@ -377,7 +397,6 @@ function buildInvisibleDonut(data,thickness,radius,overall,color) {
     .append('g')
     .append('path')
     .attr('d', arc)
-    // .attr('fill', (d,i) => color(i));
     .style('fill', color)
     .style('fill-opacity', '0')
     .on("mouseover", function(d) {
@@ -387,6 +406,7 @@ function buildInvisibleDonut(data,thickness,radius,overall,color) {
         .style('fill-opacity', '0.3');
 
       buildCenterStuff(d.data);
+      buildDollars(d.data.year);
       lastHoveredData = d.data;
     })
     .on("mouseout", function(d) {
@@ -396,6 +416,7 @@ function buildInvisibleDonut(data,thickness,radius,overall,color) {
 
       if(lastHoveredData === d.data) {
         buildCenterStuff(overall);
+        buildDollars();
       }
     })
     .each(function(d, i) { this._current = i; });
