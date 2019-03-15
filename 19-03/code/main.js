@@ -1,6 +1,7 @@
 let format = (num) => d3.format('.2s')(num).replace(/G/,'B'),
     curr = d3.format("$,"),
-    base;
+    base,
+    catBlock;
 
 const innerRadius = 300;
 const textRadius = innerRadius - 20;
@@ -31,14 +32,14 @@ function buildCategories(csvData) {
 
   categories = categories.filter(c => c.count > 0);
 
-  let catBlock = base.selectAll('.subject-header')
+  catBlock = base.selectAll('.subject-header')
     .data(categories)
     .enter();
 
-  buildDollars(catBlock);
+  buildDollars();
 }
 
-function buildDollars(catBlock) {
+function buildDollars() {
   catBlock.each(function(d) {
 
     let str = '';
