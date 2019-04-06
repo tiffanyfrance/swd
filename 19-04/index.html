@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 
 @import url('https://fonts.googleapis.com/css?family=Lato|Sigmar+One');
@@ -64,6 +65,42 @@ a:hover {
 
 .viz {
   margin-top: 100px;
+}
+
+@media (max-width: 1300px) {
+  body {
+    zoom: 90%;
+  }
+}
+
+@media (max-width: 1160px) {
+  body {
+    zoom: 70%;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    zoom: 100%;
+  }
+  .container {
+    width: 100%;
+    text-align: center;
+  }
+  .header {
+    position: relative;
+    height: 180px;
+  }
+
+  h1 {
+    font-size: 42px;
+  }
+
+  .viz {
+    zoom: 40%;
+    transform: rotate(90deg);
+    margin-top: 10px;
+  }
 }
 
 </style>
