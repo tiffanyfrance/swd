@@ -25,7 +25,7 @@ function ratings(data) {
 
   let x = d3.scaleBand()
             .range([0, width])
-            .padding(0.5);
+            .padding(0.6);
 
   let y = d3.scaleLinear()
             .range([height, 0]);
@@ -61,14 +61,14 @@ function ratings(data) {
         .attr("height", (d) => height - y(d.rating));
     }
 
-    svg.selectAll(".label")
+    svg.selectAll(".title")
         .data(data)
         .enter()
         .append('text')
         .text((d) => `${d.title} \xa0 (${d.year})`)
         .attr("x", (d) => x(d.title))
         .attr("y", (d) => y(d.rating))
-        .attr('class','label')
+        .attr('class', 'title')
         .style("text-anchor", "end")
         .attr('transform', (d) => `rotate(270,${x(d.title) - 1},${y(d.rating) + 4})`)
         .style('font-size', '11px')
@@ -104,13 +104,14 @@ function ratings(data) {
       .style('font-size', '11px')
       .style("text-anchor", "end");
 
+    addLabel(svg,660,60,40,40,5,68,'Highest IMDB Rating');
 }
 
 function length(data) {
 
   let x = d3.scaleBand()
             .range([0, width])
-            .padding(0.5);
+            .padding(0.6);
 
   let y = d3.scaleLinear()
             .range([0, height]);
@@ -170,10 +171,34 @@ function length(data) {
       });
 
     svg.append('text')
-      .text('Running time (min)')
+      .text('Movie length (min)')
       .attr('x', 0)
       .attr('y', 10)
       .style('font-size', '11px')
       .style("text-anchor", "end");
 
+    addLabel(svg,108,340,35,35,-58,-12,'Longest Runtime');
+
+    addLabel(svg,906,265,48,48,-58,-10,'Most Popular on IMDB');
+
+    addLabel(svg,1220,335,40,40,-58,-10,'Most Votes in Poll');
+
+}
+
+function addLabel(svg,x,y,x1,x2,y1,y2,str) {
+  let label = svg.append('g')
+    .attr('class', 'label')
+    .attr("transform", `translate(${x},${y})`);
+
+  label.append('line')
+    .attr('x1', x1)
+    .attr('x2', x2)
+    .attr('y1', y1)
+    .attr('y2', y2)
+    .attr('stroke', '#444')
+    .attr('stroke-width', '0.5');
+
+  label.append('text')
+    .text(str)
+    .style('font-size', '9px');
 }
