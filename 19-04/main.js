@@ -5,7 +5,7 @@
  * Top Rated Film Noir Movies
 */
 
-const margin = {top: 10, right: 0, bottom: 10, left: 100},
+const margin = {top: 10, right: 0, bottom: 20, left: 100},
     width = 1400 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -71,7 +71,8 @@ function ratings(data) {
         .attr('class','label')
         .style("text-anchor", "end")
         .attr('transform', (d) => `rotate(270,${x(d.title) - 1},${y(d.rating) + 4})`)
-        .style('font-size', '11px');
+        .style('font-size', '11px')
+        .style('fill', '#333');
 
     const defs = svg.append('defs');
     
@@ -92,7 +93,8 @@ function ratings(data) {
       .attr('clip-path', 'url(#rect-clip1)')
       .style('cursor', 'pointer')
       .on('click', function(d) {
-        console.log(d);
+        let win = window.open(d.url, '_blank');
+        win.focus();
       });
 
     svg.append('text')
@@ -163,7 +165,8 @@ function length(data) {
       .attr('clip-path', 'url(#rect-clip2)')
       .style('cursor', 'pointer')
       .on('click', function(d) {
-        console.log(d);
+        let win = window.open(d.url, '_blank');
+        win.focus();
       });
 
     svg.append('text')
