@@ -17,6 +17,12 @@ d3.csv('data.csv', (error, data) => {
     d.Donate = +d.Donate;
   });
 
+  d3.select('#poetry').selectAll('li')
+    .data(data)
+    .enter()
+    .append('li')
+    .text((d) => d.Description);
+
   sortData(data);
   console.log(data)
 });
