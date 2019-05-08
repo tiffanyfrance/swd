@@ -72,5 +72,5 @@ function addRect(data, color) {
       }
     })
     .attr('x', (d, i) => 25) 
-    .attr('y', (d, i) => Math.floor(i/5) * 10);
+    .attr('y', (d, i) => height - Math.floor(i/5) * 10);
 }
