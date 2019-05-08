@@ -2,12 +2,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  .container {
+    width: 980px;
+    margin: 0 auto;
+  }
+
+  .col {
+    float: left;
+    width: 33.33%;
+  }
+
+  /* Clear floats after the cols */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 </style>
 <body>
   <div class="container">
     <div class="header"></div>
-    <ul id="poetry"></ul>
-    <div id="viz"></div>
+    
+    <div id="viz" class="row">
+      <div class="col">
+        <ul id="poetry"></ul>
+      </div>
+    </div>
   </div>
   
 <!-- load the d3.js library -->     

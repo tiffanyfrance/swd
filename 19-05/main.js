@@ -24,7 +24,7 @@ d3.csv('data.csv', (error, data) => {
     .text((d) => d.Description);
 
   sortData(data);
-  console.log(data)
+  console.log(data);
 });
 
 function sortData(data) {
@@ -44,12 +44,15 @@ function sortData(data) {
 }
 
 function addRect(data, color) {
-  let svg = d3.select('#viz').append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-    .attr('class', 'stack')
-    .append('g')
-    .attr('transform', `translate(${margin.left},${margin.top * 2})`);
+  let svg = d3.select('#viz')
+    .append('div')
+    .attr('class', 'col')
+    .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .attr('class', 'stack')
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top * 2})`);
 
   let delta = Math.floor(data.length / 5);
 
