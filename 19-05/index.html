@@ -2,9 +2,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  @import url('https://fonts.googleapis.com/css?family=Martel:300');
+
+  * {
+    font-family: 'Martel', serif;
+    /* text-transform: lowercase; */
+    color: #333;
+  }
+
   .container {
     width: 980px;
     margin: 0 auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10%;
   }
 
   .col {
@@ -12,16 +25,30 @@
     width: 33.33%;
   }
 
-  /* Clear floats after the cols */
   .row:after {
     content: "";
     display: table;
     clear: both;
   }
+
+  .col:first-of-type {
+    max-height: 80vh;
+    overflow: hidden;
+  }
+
+  ul {    
+    margin: 0px;
+    list-style: none;
+  }
+
+  li {
+    line-height: 2;
+  }
+
 </style>
 <body>
   <div class="container">
-    <div class="header"></div>
+    <h1>Kon Marie-ing my Closet</h1>
     
     <div id="viz" class="row">
       <div class="col">
