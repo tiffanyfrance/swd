@@ -2,12 +2,12 @@
  * tiffany6872@gmail.com
  * tiffanyfrance.com
  * SWD May 2019
- * Kon Marie-ing my Closet
+ * KonMari-ing my Closet
 */
 
-const margin = {top: 10, right: 10, bottom: 40, left: 50},
+const margin = {top: 10, right: 10, bottom: 75, left: 50},
     width = 380 - margin.left - margin.right,
-    height = 570 - margin.top - margin.bottom;
+    height = 600 - margin.top - margin.bottom;
 
 let tooltip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
@@ -44,7 +44,7 @@ function sortData(data) {
   }
   
   addRect(donateData, '#ccc', 'Donate/Toss');
-  addRect(keepData, 'red', 'Keep');
+  addRect(keepData, '#FF5858', 'Keep');
 }
 
 function addRect(data, color, label) {
@@ -77,9 +77,6 @@ function addRect(data, color, label) {
     })
     .attr('x', (d, i) => i%5 * (barWidth + barPadding)) 
     .attr('y', (d, i) => height - Math.floor(i/5) * (barHeight + barPadding))
-    // .on('mouseover', function(d) {
-    //   console.log(d.Description)
-    // });
     .on("mouseover", function(d) {		
 
       let htmlStr = '';
@@ -90,18 +87,19 @@ function addRect(data, color, label) {
           htmlStr += '🌟 Sparked joy!<br />';
         }
 
-        htmlStr += `Thank you, ${description}.`;
+        htmlStr += `🙏 Thank you, ${description}.`;
       } else {
         if (d['Spark joy'] == 1) {
           htmlStr += '🌟 Sparks joy!<br />';
         }
 
-        htmlStr += `You get to stay, ${description}!`;
+        htmlStr += `👍 You get to stay, ${description}!`;
       }
 
       tooltip.transition()		
         .duration(200)		
-        .style("opacity", 1);		
+        .style("opacity", 1);	
+        	
       tooltip.html(htmlStr)	
         .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");	
@@ -117,6 +115,16 @@ function addRect(data, color, label) {
       .attr('text-anchor', 'middle')
       .attr('x', (d) => (5 * (barWidth + barPadding)) / 2) 
       .attr('y', (d) => height + margin.bottom - margin.top)
+      .attr('dy', -40)
       .style('text-transform', 'uppercase')
       .style('font-size', 10);
+    
+    svg.append('text')
+      .text(data.length)
+      .attr('text-anchor', 'middle')
+      .attr('x', (d) => (5 * (barWidth + barPadding)) / 2) 
+      .attr('y', (d) => height + margin.bottom - margin.top)
+      .attr('dy', -5)
+      .style('text-transform', 'uppercase')
+      .style('font-size', 30);
 }
