@@ -5,9 +5,9 @@
  * Kon Marie-ing my Closet
 */
 
-const margin = {top: 10, right: 10, bottom: 20, left: 50},
+const margin = {top: 10, right: 10, bottom: 40, left: 50},
     width = 380 - margin.left - margin.right,
-    height = 680 - margin.top - margin.bottom;
+    height = 570 - margin.top - margin.bottom;
 
 let tooltip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
@@ -43,11 +43,11 @@ function sortData(data) {
     }
   }
   
-  addRect(donateData, '#ccc');
-  addRect(keepData, 'red');
+  addRect(donateData, '#ccc', 'Donate/Toss');
+  addRect(keepData, 'red', 'Keep');
 }
 
-function addRect(data, color) {
+function addRect(data, color, label) {
   let svg = d3.select('#viz')
     .append('div')
     .attr('class', 'col')
@@ -93,7 +93,7 @@ function addRect(data, color) {
         htmlStr += `Thank you, ${description}.`;
       } else {
         if (d['Spark joy'] == 1) {
-          htmlStr += '🌟 Sparks so much joy!<br />';
+          htmlStr += '🌟 Sparks joy!<br />';
         }
 
         htmlStr += `You get to stay, ${description}!`;
@@ -111,4 +111,12 @@ function addRect(data, color) {
         .duration(500)		
         .style("opacity", 0);	
     });
+
+    svg.append('text')
+      .text(label)
+      .attr('text-anchor', 'middle')
+      .attr('x', (d) => (5 * (barWidth + barPadding)) / 2) 
+      .attr('y', (d) => height + margin.bottom - margin.top)
+      .style('text-transform', 'uppercase')
+      .style('font-size', 10);
 }
