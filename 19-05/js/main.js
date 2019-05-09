@@ -5,7 +5,7 @@
  * KonMari-ing my Closet
 */
 
-let firstVisibleIndex = 0;
+let firstVisibleIndex = 1;
 
 $(window).scroll(() => {
   $('.tooltip').css('opacity', 0);
@@ -13,6 +13,8 @@ $(window).scroll(() => {
   let $firstVisible;
 
   let $items = $('li');
+
+  $items.css('color', '#333');
 
   let i = 0;
 
@@ -28,10 +30,20 @@ $(window).scroll(() => {
 
   if (!$firstVisible) {
     i = $items.length;
+  } else {
+    let color = '#ccc';
+
+    if (data[i]['Spark joy'] === '1') {
+      color = 'gold';
+    } else if (data[i]['Keep'] === 1) {
+      color = '#FF5858';
+    }
+
+    $firstVisible.css('color', color);
   }
 
   if (firstVisibleIndex != i) {
-    sortData(data.slice(0, i));
+    sortData(data.slice(0, i + 1));
     firstVisibleIndex = i;
 
     if (i === $items.length) {
