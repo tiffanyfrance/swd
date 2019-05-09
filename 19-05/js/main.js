@@ -72,8 +72,8 @@ d3.csv('data.csv', (error, result) => {
     .append('li')
     .text((d) => (d.Description).charAt(0).toUpperCase() + (d.Description).slice(1));
 
-  // sortData(data);
   console.log(data);
+  sortData([]);
 });
 
 function sortData(data) {
@@ -89,17 +89,17 @@ function sortData(data) {
   }
 
   if (!donateSvg) {
-    donateSvg = createChart(donateData, 'Donate/Toss');
+    donateSvg = createChart('Donate/Toss');
   }
   updateChart(donateSvg, donateData, '#ccc');
 
   if (!keepSvg) {
-    keepSvg = createChart(keepData, 'Keep');
+    keepSvg = createChart('Keep');
   }
   updateChart(keepSvg, keepData, '#FF5858');
 }
 
-function createChart(data, label) {
+function createChart(label) {
   let svg = d3.select('#viz')
     .append('div')
     .attr('class', 'col')
@@ -120,7 +120,8 @@ function createChart(data, label) {
     .style('font-size', 10);
 
   svg.append('text')
-    .text(data.length)
+    .text(0)
+    .attr('class', 'count')
     .attr('text-anchor', 'middle')
     .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
     .attr('y', (d) => height + margin.bottom - margin.top)
@@ -132,6 +133,9 @@ function createChart(data, label) {
 }
 
 function updateChart(svg, data, color) {
+  svg.select('text.count')
+    .text(data.length);
+
   let rect = svg.selectAll('rect')
     .data(data);
 
@@ -181,5 +185,5 @@ function updateChart(svg, data, color) {
     .attr('width', barWidth)
     .attr('height', barHeight);
 
-    rect.exit().remove();
+  rect.exit().remove();
 }
