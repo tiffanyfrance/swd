@@ -5,13 +5,31 @@
  * KonMari-ing my Closet
 */
 
-const margin = {top: 10, right: 10, bottom: 75, left: 50},
-    width = 380 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+$(window).scroll(() => {
+  let $firstVisible;
 
-let tooltip = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
+  let $items = $('li');
+
+  for (let i = 0; i < $items.length; i++) {
+    let $item = $($items[i]);
+    let y = $item.offset().top - $(document).scrollTop() - 200 + 15;
+
+    if (y > 0) {
+      $firstVisible = $item;
+      break;
+    }
+  }
+
+  console.log($firstVisible.text());
+});
+
+const margin = { top: 10, right: 10, bottom: 75, left: 50 },
+  width = 380 - margin.left - margin.right,
+  height = 600 - margin.top - margin.bottom;
+
+let tooltip = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
 
 d3.csv('data.csv', (error, data) => {
   if (error) throw error;
@@ -33,8 +51,8 @@ d3.csv('data.csv', (error, data) => {
 
 function sortData(data) {
   let keepData = [],
-      donateData = [];
-  
+    donateData = [];
+
   for (var i = 0; i < data.length; i++) {
     if (data[i].Keep === 1) {
       keepData.push(data[i]);
@@ -42,7 +60,7 @@ function sortData(data) {
       donateData.push(data[i]);
     }
   }
-  
+
   addRect(donateData, '#ccc', 'Donate/Toss');
   addRect(keepData, '#FF5858', 'Keep');
 }
@@ -52,15 +70,15 @@ function addRect(data, color, label) {
     .append('div')
     .attr('class', 'col')
     .append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .attr('class', 'stack')
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top * 2})`);
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .attr('class', 'stack')
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top * 2})`);
 
   let barWidth = 55, // Make percentage instead of fixed
-      barPadding = 3,
-      barHeight = 8; // Make percentage instead of fixed
+    barPadding = 3,
+    barHeight = 8; // Make percentage instead of fixed
 
   svg.selectAll('rect')
     .data(data)
@@ -75,9 +93,9 @@ function addRect(data, color, label) {
         return color;
       }
     })
-    .attr('x', (d, i) => i%5 * (barWidth + barPadding)) 
-    .attr('y', (d, i) => height - Math.floor(i/5) * (barHeight + barPadding))
-    .on("mouseover", function(d) {		
+    .attr('x', (d, i) => i % 5 * (barWidth + barPadding))
+    .attr('y', (d, i) => height - Math.floor(i / 5) * (barHeight + barPadding))
+    .on("mouseover", function (d) {
 
       let htmlStr = '';
       let description = (d.Description).toLowerCase();
@@ -96,35 +114,35 @@ function addRect(data, color, label) {
         htmlStr += `👍 You get to stay, ${description}!`;
       }
 
-      tooltip.transition()		
-        .duration(200)		
-        .style("opacity", 1);	
-        	
-      tooltip.html(htmlStr)	
-        .style("left", (d3.event.pageX) + "px")		
-        .style("top", (d3.event.pageY - 28) + "px");	
-      })					
-    .on("mouseout", function(d) {		
-      tooltip.transition()		
-        .duration(500)		
-        .style("opacity", 0);	
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", 1);
+
+      tooltip.html(htmlStr)
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function (d) {
+      tooltip.transition()
+        .duration(500)
+        .style("opacity", 0);
     });
 
-    svg.append('text')
-      .text(label)
-      .attr('text-anchor', 'middle')
-      .attr('x', (d) => (5 * (barWidth + barPadding)) / 2) 
-      .attr('y', (d) => height + margin.bottom - margin.top)
-      .attr('dy', -40)
-      .style('text-transform', 'uppercase')
-      .style('font-size', 10);
-    
-    svg.append('text')
-      .text(data.length)
-      .attr('text-anchor', 'middle')
-      .attr('x', (d) => (5 * (barWidth + barPadding)) / 2) 
-      .attr('y', (d) => height + margin.bottom - margin.top)
-      .attr('dy', -5)
-      .style('text-transform', 'uppercase')
-      .style('font-size', 30);
+  svg.append('text')
+    .text(label)
+    .attr('text-anchor', 'middle')
+    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
+    .attr('y', (d) => height + margin.bottom - margin.top)
+    .attr('dy', -40)
+    .style('text-transform', 'uppercase')
+    .style('font-size', 10);
+
+  svg.append('text')
+    .text(data.length)
+    .attr('text-anchor', 'middle')
+    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
+    .attr('y', (d) => height + margin.bottom - margin.top)
+    .attr('dy', -5)
+    .style('text-transform', 'uppercase')
+    .style('font-size', 30);
 }
