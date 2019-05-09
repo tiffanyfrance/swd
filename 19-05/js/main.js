@@ -30,7 +30,7 @@ $(window).scroll(() => {
 
   if (firstVisibleIndex != i) {
     firstVisibleIndex = i;
-    
+
     if ($firstVisible) {
       console.log(i, $firstVisible.text());
     } else {
@@ -47,8 +47,12 @@ let tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
-d3.csv('data.csv', (error, data) => {
+let data;
+
+d3.csv('data.csv', (error, result) => {
   if (error) throw error;
+
+  data = result;
 
   data.forEach((d) => {
     d.Keep = +d.Keep;
@@ -96,12 +100,11 @@ function addRect(data, color, label) {
     barPadding = 3,
     barHeight = 8; // Make percentage instead of fixed
 
-  svg.selectAll('rect')
-    .data(data)
-    .enter()
+  let rect = svg.selectAll('rect')
+    .data(data);
+
+  rect.enter()
     .append('rect')
-    .attr('width', barWidth)
-    .attr('height', barHeight)
     .attr('fill', (d) => {
       if (d['Spark joy'] == 1) {
         return 'gold';
@@ -112,7 +115,6 @@ function addRect(data, color, label) {
     .attr('x', (d, i) => i % 5 * (barWidth + barPadding))
     .attr('y', (d, i) => height - Math.floor(i / 5) * (barHeight + barPadding))
     .on("mouseover", function (d) {
-
       let htmlStr = '';
       let description = (d.Description).toLowerCase();
 
@@ -142,7 +144,10 @@ function addRect(data, color, label) {
       tooltip.transition()
         .duration(500)
         .style("opacity", 0);
-    });
+    })
+  .merge(rect)
+    .attr('width', barWidth)
+    .attr('height', barHeight);
 
   svg.append('text')
     .text(label)
