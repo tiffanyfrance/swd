@@ -8,6 +8,8 @@
 let firstVisibleIndex = 0;
 
 $(window).scroll(() => {
+  $('.tooltip').css('opacity', 0);
+
   let $firstVisible;
 
   let $items = $('li');
@@ -31,6 +33,10 @@ $(window).scroll(() => {
   if (firstVisibleIndex != i) {
     sortData(data.slice(0, i));
     firstVisibleIndex = i;
+
+    if (i === $items.length) {
+      $('#final-credits').fadeTo(500, 1);
+    }
   }
 });
 
@@ -145,6 +151,7 @@ function updateChart(svg, data, color) {
     })
     .attr('x', (d, i) => i % 5 * (barWidth + barPadding))
     .attr('y', (d, i) => height - Math.floor(i / 5) * (barHeight + barPadding))
+    .style('opacity', 0)
     .on("mouseover", function (d) {
       let htmlStr = '';
       let description = (d.Description).toLowerCase();
@@ -177,6 +184,13 @@ function updateChart(svg, data, color) {
         .style("opacity", 0);
     })
     .merge(rect)
+    .transition()
+    .duration(200)
+    .style('opacity', 1);
 
-  rect.exit().remove();
+  rect.exit()
+    .transition()
+    .duration(200)
+    .style('opacity', 0)
+    .remove();
 }

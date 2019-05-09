@@ -19,6 +19,7 @@
     height: 200px;
     position: fixed;
     background: white;
+    z-index: 1;
   }
 
   .container {
@@ -26,6 +27,8 @@
     margin: 0 auto;
     margin-top: 50px;
     z-index: 2;
+    position: fixed;
+    margin-left: calc(50% - 490px);
   }
 
   h1 {
@@ -56,6 +59,7 @@
 
   ul {
     margin: 0px;
+    padding: 0px;
     list-style: none;
   }
 
@@ -79,6 +83,7 @@
     border-radius: 3px;
     pointer-events: none;
     font-size: 12px;
+    z-index: 3;
   }
 
   b {
@@ -91,7 +96,7 @@
 
   #poetry {
     margin-top: 200px;
-    margin-bottom: calc(100vh - 800px);
+    margin-bottom: 300px;
   }
 
   #bottom-mask {
@@ -101,11 +106,20 @@
     bottom: 0;
     background: white;
   }
+
+  #final-credits {
+    opacity: 0;
+    margin-bottom: calc(100vh - 800px);
+  }
+
+  #final-credits p {
+    font-size: 12px;
+  }
 </style>
 
 <body>
   <div id="top-mask"></div>
-  <div class="container" style="position: fixed; margin-left: calc(50% - 490px);">
+  <div class="container">
     <h1>KonMari-ing my Closet</h1>
     <div id="viz" class="row">
       <div class="col">&nbsp;</div>
@@ -113,7 +127,7 @@
   </div>
   <div class="col" style="width: 327px; margin-left: calc(50% - 490px);">
     <ul id="poetry"></ul>
-    <div id="final-credits">  
+    <div id="final-credits">
       <h2>About this process</h2>
       <p>
         <b>323</b> <span>items</span><br />
@@ -123,29 +137,40 @@
         <b>7 bags</b> <span>to Goodwill</span>
       </p>
       <p>
-        I decided to <a href="https://konmari.com/pages/about">KonMari</a> my closet for the THIRD time this year (and it's only May!)
+        I decided to <a href="https://konmari.com/pages/about">KonMari</a> my closet for the THIRD time this year (and
+        it's only May!)
       </p>
       <p>
-        Marie Kondo method has you hold each piece of clothing and decide whether it spark joy. If yes, you keep it. If not, you donate it. 
-        The thing is there are so few items that bring me joy, and I still need to wear clothes, so the keep pile was a conbination spark joy and clothing basics (e.g. underwear, jeans, and workout clothes).
+        Marie Kondo method has you hold each piece of clothing and decide whether it spark joy. If yes, you keep it. If
+        not, you donate it.
+        The thing is there are so few items that bring me joy, and I still need to wear clothes, so the keep pile was a
+        conbination spark joy and clothing basics (e.g. underwear, jeans, and workout clothes).
       </p>
       <p>
-        This time of decluttering was more difficult than before since 
+        This time of decluttering was more difficult than before since
         (1) I had already donated/tossed the obvious bad fits and
-        (2) because I decided to <a href="https://twitter.com/tiffylou/status/1125493087818661889">manually track</a> EVERY single item of clothing for this project.
+        (2) because I decided to <a href="https://twitter.com/tiffylou/status/1125493087818661889">manually track</a>
+        EVERY single item of clothing for this project.
       </p>
-      <p>I am participating in May's <a href="http://www.storytellingwithdata.com/swdchallenge">#SWDchallenge</a>, which challenged participants to collect and visualize their own data.
-        I included a rating, which was basically a "gut feeling" number that had no metrics or validity other than how I was feeling at the moment.
-        When looking at the data a second time, the "gut rating" appeared essentially useless as a metric, therefore I went back and added 5 columns: Quality, Fit, Neccesity, Comfy, and Style. 
-        I added a sixth column which was the average score of those more specific values. Interestingly, the weighted totals were similiar to the "gut rating" but they had more meaning behind them.
+      <p>I am participating in May's <a href="http://www.storytellingwithdata.com/swdchallenge">#SWDchallenge</a>, which
+        challenged participants to collect and visualize their own data.
+        I included a rating, which was basically a "gut feeling" number that had no metrics or validity other than how I
+        was feeling at the moment.
+        When looking at the data a second time, the "gut rating" appeared essentially useless as a metric, therefore I
+        went back and added 5 columns: Quality, Fit, Neccesity, Comfy, and Style.
+        I added a sixth column which was the average score of those more specific values. Interestingly, the weighted
+        totals were similiar to the "gut rating" but they had more meaning behind them.
       </p>
       <p>
-        During the collection process I made some assumptions about the data. I appeared that few things sparked joy, however 62 of 323 items were marked as "sparked joy".
-        Additionally, I've watched the show but never seen this: Some things that sparked joy ended up in the give away pile.
+        During the collection process I made some assumptions about the data. I appeared that few things sparked joy,
+        however 62 of 323 items were marked as "sparked joy".
+        Additionally, I've watched the show but never seen this: Some things that sparked joy ended up in the give away
+        pile.
       </p>
       <p>
-        Get in touch! <a href="http://tiffanyfrance.com">Tiffany France</a> | <a href="https://github.com/tiffylou/swd/tree/master/19-05">Github</a>
-      </p> 
+        Get in touch! <a href="http://tiffanyfrance.com">Tiffany France</a> | <a
+          href="https://github.com/tiffylou/swd/tree/master/19-05">Github</a>
+      </p>
     </div>
   </div>
   <div id="bottom-mask"></div>
