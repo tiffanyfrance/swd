@@ -5,12 +5,16 @@
  * KonMari-ing my Closet
 */
 
+let firstVisibleIndex = 0;
+
 $(window).scroll(() => {
   let $firstVisible;
 
   let $items = $('li');
 
-  for (let i = 0; i < $items.length; i++) {
+  let i = 0;
+
+  for (; i < $items.length; i++) {
     let $item = $($items[i]);
     let y = $item.offset().top - $(document).scrollTop() - 200 + 15;
 
@@ -20,7 +24,19 @@ $(window).scroll(() => {
     }
   }
 
-  console.log($firstVisible.text());
+  if (!$firstVisible) {
+    i = $items.length;
+  }
+
+  if (firstVisibleIndex != i) {
+    firstVisibleIndex = i;
+    
+    if ($firstVisible) {
+      console.log(i, $firstVisible.text());
+    } else {
+      console.log(i);
+    }
+  }
 });
 
 const margin = { top: 10, right: 10, bottom: 75, left: 50 },
