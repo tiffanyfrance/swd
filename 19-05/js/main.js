@@ -29,15 +29,8 @@ $(window).scroll(() => {
   }
 
   if (firstVisibleIndex != i) {
-    firstVisibleIndex = i;
-
     sortData(data.slice(0, i));
-
-    if ($firstVisible) {
-      console.log(i, $firstVisible.text());
-    } else {
-      console.log(i);
-    }
+    firstVisibleIndex = i;
   }
 });
 
@@ -141,6 +134,8 @@ function updateChart(svg, data, color) {
 
   rect.enter()
     .append('rect')
+    .attr('width', barWidth)
+    .attr('height', barHeight)
     .attr('fill', (d) => {
       if (d['Spark joy'] == 1) {
         return 'gold';
@@ -182,8 +177,6 @@ function updateChart(svg, data, color) {
         .style("opacity", 0);
     })
     .merge(rect)
-    .attr('width', barWidth)
-    .attr('height', barHeight);
 
   rect.exit().remove();
 }
