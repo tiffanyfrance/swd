@@ -9,6 +9,7 @@ let firstVisibleIndex = 1;
 
 $(window).scroll(() => {
   $('.tooltip').css('opacity', 0);
+  $('.scroll-down').fadeTo(1000, 0);
 
   let $firstVisible;
 
