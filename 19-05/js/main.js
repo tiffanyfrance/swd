@@ -31,6 +31,8 @@ $(window).scroll(() => {
   if (firstVisibleIndex != i) {
     firstVisibleIndex = i;
 
+    sortData(data.slice(0, i));
+
     if ($firstVisible) {
       console.log(i, $firstVisible.text());
     } else {
@@ -43,11 +45,16 @@ const margin = { top: 10, right: 10, bottom: 75, left: 50 },
   width = 380 - margin.left - margin.right,
   height = 600 - margin.top - margin.bottom;
 
+const barWidth = 55, // Make percentage instead of fixed
+  barPadding = 3,
+  barHeight = 8; // Make percentage instead of fixed
+
 let tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
 let data;
+let donateSvg, keepSvg;
 
 d3.csv('data.csv', (error, result) => {
   if (error) throw error;
@@ -65,7 +72,7 @@ d3.csv('data.csv', (error, result) => {
     .append('li')
     .text((d) => (d.Description).charAt(0).toUpperCase() + (d.Description).slice(1));
 
-  sortData(data);
+  // sortData(data);
   console.log(data);
 });
 
@@ -81,11 +88,18 @@ function sortData(data) {
     }
   }
 
-  addRect(donateData, '#ccc', 'Donate/Toss');
-  addRect(keepData, '#FF5858', 'Keep');
+  if (!donateSvg) {
+    donateSvg = createChart(donateData, 'Donate/Toss');
+  }
+  updateChart(donateSvg, donateData, '#ccc');
+
+  if (!keepSvg) {
+    keepSvg = createChart(keepData, 'Keep');
+  }
+  updateChart(keepSvg, keepData, '#FF5858');
 }
 
-function addRect(data, color, label) {
+function createChart(data, label) {
   let svg = d3.select('#viz')
     .append('div')
     .attr('class', 'col')
@@ -96,10 +110,28 @@ function addRect(data, color, label) {
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top * 2})`);
 
-  let barWidth = 55, // Make percentage instead of fixed
-    barPadding = 3,
-    barHeight = 8; // Make percentage instead of fixed
+  svg.append('text')
+    .text(label)
+    .attr('text-anchor', 'middle')
+    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
+    .attr('y', (d) => height + margin.bottom - margin.top)
+    .attr('dy', -40)
+    .style('text-transform', 'uppercase')
+    .style('font-size', 10);
 
+  svg.append('text')
+    .text(data.length)
+    .attr('text-anchor', 'middle')
+    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
+    .attr('y', (d) => height + margin.bottom - margin.top)
+    .attr('dy', -5)
+    .style('text-transform', 'uppercase')
+    .style('font-size', 30);
+
+  return svg;
+}
+
+function updateChart(svg, data, color) {
   let rect = svg.selectAll('rect')
     .data(data);
 
@@ -145,25 +177,9 @@ function addRect(data, color, label) {
         .duration(500)
         .style("opacity", 0);
     })
-  .merge(rect)
+    .merge(rect)
     .attr('width', barWidth)
     .attr('height', barHeight);
 
-  svg.append('text')
-    .text(label)
-    .attr('text-anchor', 'middle')
-    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
-    .attr('y', (d) => height + margin.bottom - margin.top)
-    .attr('dy', -40)
-    .style('text-transform', 'uppercase')
-    .style('font-size', 10);
-
-  svg.append('text')
-    .text(data.length)
-    .attr('text-anchor', 'middle')
-    .attr('x', (d) => (5 * (barWidth + barPadding)) / 2)
-    .attr('y', (d) => height + margin.bottom - margin.top)
-    .attr('dy', -5)
-    .style('text-transform', 'uppercase')
-    .style('font-size', 30);
+    rect.exit().remove();
 }
