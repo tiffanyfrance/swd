@@ -53,17 +53,17 @@ $(window).scroll(() => {
   }
 });
 
-const windowHeight = $(window).innerHeight();
+const windowWidth = $(window).innerWidth(),
+  windowHeight = $(window).innerHeight();
 
-console.log(windowHeight)
+console.log(windowWidth)
 
-const margin = { top: 10, right: 10, bottom: 75, left: 20 },
+const margin = (windowWidth < 1020) ? { top: 10, right: 0, bottom: 75, left: 0 } : { top: 10, right: 10, bottom: 75, left: 50 },
   width = 380 - margin.left - margin.right,
   mobileWidth = (d3.select('#viz').node().getBoundingClientRect().width / 2) - margin.left - margin.right,
-  // height = 600 - margin.top - margin.bottom;
-  height = (windowHeight < 1020) ? ((windowHeight * .75) - margin.top - margin.bottom) : (600 - margin.top - margin.bottom);
+  height = (windowWidth < 1020) ? ((windowHeight * .75) - margin.bottom) : (600 - margin.top - margin.bottom);
 
-  const barWidth = (window.innerWidth < 1020) ? (mobileWidth / 6) : 55;
+const barWidth = (windowWidth < 1020) ? (mobileWidth / 6) : 55,
 // const barWidth = mobileWidth / 5, // Make percentage instead of fixed
   barPadding = 3,
   barHeight = 8; // Make percentage instead of fixed
