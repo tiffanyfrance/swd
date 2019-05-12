@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   @import url('https://fonts.googleapis.com/css?family=Martel:300');
 
@@ -124,6 +124,31 @@
       from { opacity: 0; }
       to   { opacity: 1; }
   }
+
+  @media (max-width: 1020px) {
+    h1 {
+      font-size: 1.5em;
+      padding-top: 20px;
+    }
+
+    .container {
+      width: 100%;
+      margin: 0 auto;
+    }
+  
+    .col:first-of-type {
+      display: none;
+    }
+
+    .content {
+      visibility: hidden;
+    }
+
+    .col {
+      width: 50%;
+      text-align: center;
+    }
+  }
 </style>
 
 <body>
@@ -131,13 +156,13 @@
   <div class="container">
     <h1>
       KonMari-ing my Closet
-      <span class="scroll-down">scroll down &darr;</span>
+      <span class="scroll-down">scroll &darr;</span>
     </h1>
     <div id="viz" class="row">
       <div class="col">&nbsp;</div>
     </div>
   </div>
-  <div class="col" style="width: 327px; margin-left: calc(50% - 490px);">
+  <div class="col content" style="width: 327px; margin-left: calc(50% - 490px);">
     <ul id="poetry"></ul>
     <div id="final-credits">
       <h2>About this process</h2>

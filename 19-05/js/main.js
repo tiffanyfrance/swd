@@ -53,11 +53,18 @@ $(window).scroll(() => {
   }
 });
 
-const margin = { top: 10, right: 10, bottom: 75, left: 50 },
-  width = 380 - margin.left - margin.right,
-  height = 600 - margin.top - margin.bottom;
+const windowHeight = $(window).innerHeight();
 
-const barWidth = 55, // Make percentage instead of fixed
+console.log(windowHeight)
+
+const margin = { top: 10, right: 10, bottom: 75, left: 20 },
+  width = 380 - margin.left - margin.right,
+  mobileWidth = (d3.select('#viz').node().getBoundingClientRect().width / 2) - margin.left - margin.right,
+  // height = 600 - margin.top - margin.bottom;
+  height = (windowHeight < 1020) ? ((windowHeight * .75) - margin.top - margin.bottom) : (600 - margin.top - margin.bottom);
+
+  const barWidth = (window.innerWidth < 1020) ? (mobileWidth / 6) : 55;
+// const barWidth = mobileWidth / 5, // Make percentage instead of fixed
   barPadding = 3,
   barHeight = 8; // Make percentage instead of fixed
 
