@@ -1,15 +1,20 @@
-/* design and development by Tiffany France
+/* Design and Development by Tiffany France
  * tiffany6872@gmail.com
  * tiffanyfrance.com
  * SWD May 2019
  * KonMari-ing my Closet
 */
 
+const windowWidth = $(window).innerWidth(),
+  windowHeight = $(window).innerHeight();
+
 let firstVisibleIndex = 1;
 
 $(window).scroll(() => {
   $('.tooltip').css('opacity', 0);
   $('.scroll-down').fadeTo(1000, 0);
+  // $('.scroll-down').html('tiffany france');
+  // $('.scroll-down').css('opacity', 1);
 
   let $firstVisible;
 
@@ -52,11 +57,6 @@ $(window).scroll(() => {
     }
   }
 });
-
-const windowWidth = $(window).innerWidth(),
-  windowHeight = $(window).innerHeight();
-
-console.log(windowWidth)
 
 const margin = (windowWidth < 1020) ? { top: 10, right: 0, bottom: 75, left: 0 } : { top: 10, right: 10, bottom: 75, left: 50 },
   width = 380 - margin.left - margin.right,
