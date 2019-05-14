@@ -13,7 +13,7 @@ let firstVisibleIndex = 1;
 $(window).scroll(() => {
   $('.tooltip').css('opacity', 0);
   $('.scroll-down').fadeTo(1000, 0);
-  // $('.scroll-down').html('tiffany france');
+  // $('.scroll-down').html('<a href="http://tiffanyfrance.com">Tiffany France</a>');
   // $('.scroll-down').css('opacity', 1);
 
   let $firstVisible;
