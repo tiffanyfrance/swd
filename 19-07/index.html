@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SWD July 2019</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="d3-scale-radial.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    body {
+      background: #fff;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 auto;
+      text-align: center;
+      margin: 20px 0px;
+    }
+
+    svg {
+      fill: #333;
+    }
+
+    text {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-family: Arial, Helvetica, sans-serif;
+      fill: #000;
+    }
+
+    .ring-0 {
+      /* display: none; */
+    }
+
+    .ring-100 {
+      fill: #efefef;
+      opacity: 0.75
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Weather in Richmond, VA: <span style="color:red">100+ Temps</span> vs <span style="color:blue">0- Temps</span></h1>
+  <script>
+    var margin = { top: 0, right: 0, bottom: 0, left: 0 };
+
+    var width = 100 - margin.left - margin.right,
+      height = 100 - margin.top - margin.bottom;
+
+    var innerRadius = 15,
+      outerRadius = Math.min(width, height) / 2 - 6;
+
+    var parseTime = d3.timeParse("%Y-%m-%d");
+
+    var formatMonth = d3.timeFormat("%b");
+
+    var fullCircle = 2 * Math.PI;
+
+
+
+    d3.csv("weather.csv", function (d) {
+      d.DATE = parseTime(d.DATE);
+      d.TMAX = +d.TMAX;
+      d.TMIN = +d.TMIN;
+
+      return d;
+    }, function (error, data) {
+      if (error) throw error;
+
+      let foo = {};
+
+      for (let d of data) {
+        let key = d.DATE.toISOString().substr(0, 4);
+
+        let arr = foo[key];
+
+        if (!arr) {
+          arr = [];
+          foo[key] = arr;
+        }
+
+        arr.push(d);
+      }
+
+      // console.log(foo);
+
+      for (var year in foo) {
+        console.log(foo)
+        buildSVG(year);
+      }
+
+
+
+
+
+      function buildSVG(year) {
+        var svg = d3.select("body").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var g = svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var x = d3.scaleTime()
+          .range([0, fullCircle]);
+
+        var y = d3.scaleRadial()
+          .range([innerRadius, outerRadius]);
+
+        var lineTMAX = d3.lineRadial()
+          .angle(function (d) { return x(d.DATE); })
+          .radius(function (d) { return y(d.TMAX); });
+
+        var lineTMIN = d3.lineRadial()
+          .angle(function (d) { return x(d.DATE); })
+          .radius(function (d) { return y(d.TMIN); });
+
+        var data = foo[year];
+
+        var hotDays = 0;
+
+        for (var d of data) {
+          if (d.TMAX > 95) {
+            hotDays++
+          }
+        }
+
+        var coldDays = 0;
+
+        for (var d of data) {
+          if (d.TMIN < 10) {
+            coldDays++
+          }
+        }
+
+        console.log(year, hotDays);
+
+        x.domain(d3.extent(data, function (d) { return d.DATE; }));
+        y.domain([0, 100]);
+        // y.domain(d3.extent(data, function (d) { return d.TMAX; }));
+        // console.log(d3.extent(data, function (d) { return d.TMIN; }));
+
+        var yAxis = g.append("g")
+          .attr("text-anchor", "middle")
+          .attr('class', 'y-axis');
+
+        var yTick = yAxis
+          .selectAll(".y-axis")
+          .data(y.ticks(1))
+          .enter().append("g");
+
+        yTick.append("circle")
+          .attr("fill", "none")
+          .attr("stroke", "none")
+          .attr('class', function (d, i) { return 'ring-' + d; })
+          .attr("r", y);
+
+        // var linePlot1 = g.append("path")
+        //   .datum(data)
+        //   .attr("fill", "#fff")
+        //   .attr("stroke", "red")
+        //   .style('opacity', 0.15)
+        //   .attr("d", lineTMAX);
+
+        // var linePlot2 = g.append("path")
+        //   .datum(data)
+        //   .attr("fill", "#fff")
+        //   .attr("stroke", "blue")
+        //   .style('opacity', 0.15)
+        //   .attr("d", lineTMIN);
+
+        g.selectAll('.high')
+          .data(data)
+          .enter()
+          .append('circle')
+          .attr('class', 'high')
+          .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
+          .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
+          .attr('r', 1.5)
+          .attr('fill', function (d) {
+            if (d.TMAX >= 100) {
+              return 'red'
+            } else {
+              return 'transparent'
+            }
+          });
+
+        g.selectAll('.low')
+          .data(data)
+          .enter()
+          .append('circle')
+          .attr('class', 'low')
+          .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
+          .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
+          .attr('r', 1.5)
+          .attr('fill', function (d) {
+            if (d.TMIN <= 0) {
+              return 'blue'
+            } else {
+              return 'transparent'
+            }
+          });
+
+        // var labels = yTick.append("text")
+        //     .attr("y", function(d) { return -y(d); })
+        //     .attr("dy", "0.35em")
+        //     .text(function(d) { return d; });
+
+        // yTick.append("text")
+        //   .attr("y", function(d) { return -y(d); })
+        //   .attr("dy", "0.35em")
+        //   .text(function(d) { return d; });
+
+        var xAxis = g.append("g");
+
+        var xTick = xAxis
+          .selectAll("g")
+          .data(x.ticks(12))
+          .enter().append("g")
+          .attr("text-anchor", "middle")
+          .attr("transform", function (d) {
+            return "rotate(" + ((x(d)) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)";
+          });
+
+        // xTick.append("line")
+        //   .attr("x2", -5)
+        //   .attr("stroke", "#000");
+
+        // xTick.append("text")
+        //   .attr("transform", function (d) {
+        //     var angle = x(d);
+        //     return ((angle < Math.PI / 2) || 
+        //       (angle > (Math.PI * 3 / 2))) ? "rotate(90)translate(0,22)" : "rotate(-90)translate(0, -15)";
+        //   })
+        //   .text(function (d) {
+        //     return formatMonth(d);
+        //   })
+        //   .attr("opacity", 0.6)
+
+        var title = g.append("g")
+          .attr("class", "title")
+          .append("text")
+          .attr("dy", "-0.2em")
+          .attr("text-anchor", "middle")
+          .text(year)
+
+        // var subtitle = g.append("text")
+        // 		.attr("dy", "1em")
+        //     .attr("text-anchor", "middle")
+        // 		.attr("opacity", 0.6)
+        // 		.text("16/17");  
+
+        // var lineLength = linePlot.node().getTotalLength();
+
+        // linePlot
+        //   .attr("stroke-dasharray", lineLength + " " + lineLength)
+        //   .attr("stroke-dashoffset", -lineLength)
+        //   .transition()
+        //     .duration(2000)
+        //     .ease(d3.easeLinear)
+        //     .attr("stroke-dashoffset", 0);
+      }
+
+
+    });
+
+  </script>
+</body>
+
+</html>
