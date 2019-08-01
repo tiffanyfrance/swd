@@ -16,13 +16,17 @@
 
     body {
       background: #fff;
+      text-align: center;
     }
 
     h1 {
       font-size: 18px;
-      margin: 0 auto;
       text-align: center;
-      margin: 20px 0px;
+      margin: 20px 0px 10px;
+    }
+
+    h2 {
+      font-size: 12px;
     }
 
     svg {
@@ -30,7 +34,7 @@
     }
 
     text {
-      font-size: 10px;
+      font-size: 0px;
       text-transform: uppercase;
       font-family: Arial, Helvetica, sans-serif;
       fill: #000;
@@ -38,24 +42,26 @@
 
     .ring-0 {
       /* display: none; */
+      /* stroke: #ccc; */
     }
 
     .ring-100 {
-      fill: #efefef;
-      opacity: 0.75
+      /* fill: #000;
+      opacity: 0.01; */
     }
   </style>
 </head>
 
 <body>
-  <h1>Weather in Richmond, VA: <span style="color:red">100+ Temps</span> vs <span style="color:blue">0- Temps</span></h1>
+  <h1>72 years of Highs and Lows in Richmond, VA.</h1>
+  <h2>Dots represent <span style="color:red">100+ Temps</span> and <span style="color:blue">0- Temps</span></h2>
   <script>
     var margin = { top: 0, right: 0, bottom: 0, left: 0 };
 
-    var width = 100 - margin.left - margin.right,
-      height = 100 - margin.top - margin.bottom;
+    var width = 700 - margin.left - margin.right,
+      height = 700 - margin.top - margin.bottom;
 
-    var innerRadius = 15,
+    var innerRadius = 10,
       outerRadius = Math.min(width, height) / 2 - 6;
 
     var parseTime = d3.timeParse("%Y-%m-%d");
@@ -63,6 +69,12 @@
     var formatMonth = d3.timeFormat("%b");
 
     var fullCircle = 2 * Math.PI;
+
+    var svg = d3.select("body").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 
@@ -102,13 +114,10 @@
 
 
       function buildSVG(year) {
-        var svg = d3.select("body").append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var className = 'year-' + year;
 
         var g = svg.append("g")
+          .attr('class', className)
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
         var x = d3.scaleTime()
@@ -130,7 +139,7 @@
         var hotDays = 0;
 
         for (var d of data) {
-          if (d.TMAX > 95) {
+          if (d.TMAX > 100) {
             hotDays++
           }
         }
@@ -138,7 +147,7 @@
         var coldDays = 0;
 
         for (var d of data) {
-          if (d.TMIN < 10) {
+          if (d.TMIN < 0) {
             coldDays++
           }
         }
@@ -150,34 +159,38 @@
         // y.domain(d3.extent(data, function (d) { return d.TMAX; }));
         // console.log(d3.extent(data, function (d) { return d.TMIN; }));
 
-        var yAxis = g.append("g")
-          .attr("text-anchor", "middle")
-          .attr('class', 'y-axis');
+        // var yAxis = g.append("g")
+        //   .attr("text-anchor", "middle")
+        //   .attr('class', 'y-axis');
 
-        var yTick = yAxis
-          .selectAll(".y-axis")
-          .data(y.ticks(1))
-          .enter().append("g");
+        // var yTick = yAxis
+        //   .selectAll(".y-axis")
+        //   .data(y.ticks(1))
+        //   .enter().append("g");
 
-        yTick.append("circle")
+        // yTick.append("circle")
+        //   .attr("fill", "transparent")
+        //   .attr("stroke", "#eee")
+        //   .attr('stroke-width', 1)
+        //   .attr('class', function (d, i) { return 'ring-' + d; })
+        //   .attr("r", y);
+
+        var linePlot1 = g.append("path")
+          .datum(data)
           .attr("fill", "none")
-          .attr("stroke", "none")
-          .attr('class', function (d, i) { return 'ring-' + d; })
-          .attr("r", y);
+          .attr("stroke", "#EE6A6A")
+          .style('opacity', 0.15)
+          .attr("d", lineTMAX)
+          .on('mouseover', (d) => {
+            console.log(d3.select(this))
+          });
 
-        // var linePlot1 = g.append("path")
-        //   .datum(data)
-        //   .attr("fill", "#fff")
-        //   .attr("stroke", "red")
-        //   .style('opacity', 0.15)
-        //   .attr("d", lineTMAX);
-
-        // var linePlot2 = g.append("path")
-        //   .datum(data)
-        //   .attr("fill", "#fff")
-        //   .attr("stroke", "blue")
-        //   .style('opacity', 0.15)
-        //   .attr("d", lineTMIN);
+        var linePlot2 = g.append("path")
+          .datum(data)
+          .attr("fill", "none")
+          .attr("stroke", "#75B0FF")
+          .style('opacity', 0.15)
+          .attr("d", lineTMIN);
 
         g.selectAll('.high')
           .data(data)
@@ -186,7 +199,7 @@
           .attr('class', 'high')
           .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
           .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
-          .attr('r', 1.5)
+          .attr('r', 2)
           .attr('fill', function (d) {
             if (d.TMAX >= 100) {
               return 'red'
@@ -202,7 +215,7 @@
           .attr('class', 'low')
           .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
           .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
-          .attr('r', 1.5)
+          .attr('r', 2)
           .attr('fill', function (d) {
             if (d.TMIN <= 0) {
               return 'blue'
@@ -273,6 +286,7 @@
 
 
     });
+
 
   </script>
 </body>
