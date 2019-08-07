@@ -15,7 +15,7 @@
     }
 
     body {
-      background: #fff;
+      background: #efefef;
       text-align: center;
     }
 
@@ -71,11 +71,26 @@
     var fullCircle = 2 * Math.PI;
 
     var svg = d3.select("body").append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    let maxVals = [];
+
+    var x = d3.scaleTime()
+      .range([0, fullCircle]);
+
+    var y = d3.scaleRadial()
+      .range([innerRadius, outerRadius]);
+
+    var lineTMAX = d3.lineRadial()
+      .angle(function (d) { return x(d.DATE); })
+      .radius(function (d) { return y(d.TMAX); });
+
+    var lineTMIN = d3.lineRadial()
+      .angle(function (d) { return x(d.DATE); })
+      .radius(function (d) { return y(d.TMIN); });
 
 
     d3.csv("weather.csv", function (d) {
@@ -102,10 +117,51 @@
         arr.push(d);
       }
 
+      for (let i = 0; i < 365; i++) {
+
+        let max = 0;
+        let d = null;
+
+        for (let key in foo) {
+          let val = foo[key];
+          if (val[i] && val[i].TMAX > max) {
+            max = val[i].TMAX;
+            d = val[i];
+            d.year = key;
+          }
+        }
+
+        x.domain(d3.extent(foo[d.year], function (d) { return d.DATE; }));
+        y.domain([0, 100]);
+
+        d.angle = x(d.DATE);
+        d.radius = y(d.TMAX);
+
+        maxVals[i] = d;
+      }
+
+      console.log(maxVals);
+
+      // x.domain([0, 365]);
+      // y.domain([0, 100]);
+
+      var bgTMAX = d3.lineRadial()
+        .angle(function (d) { return d.angle; })
+        .radius(function (d) { return d.radius; });
+
+      var g = svg.append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+      var linePlot1 = g.append("path")
+        .datum(maxVals)
+        .attr("fill", "white")
+        .attr("stroke", "none")
+        // .style('opacity', 0.15)
+        .attr("d", bgTMAX)
+
       // console.log(foo);
 
       for (var year in foo) {
-        console.log(foo)
         buildSVG(year);
       }
 
@@ -119,20 +175,6 @@
         var g = svg.append("g")
           .attr('class', className)
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-        var x = d3.scaleTime()
-          .range([0, fullCircle]);
-
-        var y = d3.scaleRadial()
-          .range([innerRadius, outerRadius]);
-
-        var lineTMAX = d3.lineRadial()
-          .angle(function (d) { return x(d.DATE); })
-          .radius(function (d) { return y(d.TMAX); });
-
-        var lineTMIN = d3.lineRadial()
-          .angle(function (d) { return x(d.DATE); })
-          .radius(function (d) { return y(d.TMIN); });
 
         var data = foo[year];
 
@@ -152,7 +194,7 @@
           }
         }
 
-        console.log(year, hotDays);
+        // console.log(year, hotDays);
 
         x.domain(d3.extent(data, function (d) { return d.DATE; }));
         y.domain([0, 100]);
@@ -182,7 +224,7 @@
           .style('opacity', 0.15)
           .attr("d", lineTMAX)
           .on('mouseover', (d) => {
-            console.log(d3.select(this))
+            // console.log(d3.select(this))
           });
 
         var linePlot2 = g.append("path")
