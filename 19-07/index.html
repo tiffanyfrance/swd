@@ -15,7 +15,7 @@
     }
 
     body {
-      background: #efefef;
+      background: #eee;
       text-align: center;
     }
 
@@ -102,16 +102,16 @@
     }, function (error, data) {
       if (error) throw error;
 
-      let foo = {};
+      let dataByYear = {};
 
       for (let d of data) {
-        let key = d.DATE.toISOString().substr(0, 4);
+        let year = d.DATE.toISOString().substr(0, 4);
 
-        let arr = foo[key];
+        let arr = dataByYear[year];
 
         if (!arr) {
           arr = [];
-          foo[key] = arr;
+          dataByYear[year] = arr;
         }
 
         arr.push(d);
@@ -122,16 +122,16 @@
         let max = 0;
         let d = null;
 
-        for (let key in foo) {
-          let val = foo[key];
+        for (let year in dataByYear) {
+          let val = dataByYear[year];
           if (val[i] && val[i].TMAX > max) {
             max = val[i].TMAX;
             d = val[i];
-            d.year = key;
+            d.year = year;
           }
         }
 
-        x.domain(d3.extent(foo[d.year], function (d) { return d.DATE; }));
+        x.domain(d3.extent(dataByYear[d.year], function (d) { return d.DATE; }));
         y.domain([0, 100]);
 
         d.angle = x(d.DATE);
@@ -139,11 +139,6 @@
 
         maxVals[i] = d;
       }
-
-      console.log(maxVals);
-
-      // x.domain([0, 365]);
-      // y.domain([0, 100]);
 
       var bgTMAX = d3.lineRadial()
         .angle(function (d) { return d.angle; })
@@ -154,20 +149,13 @@
 
       var linePlot1 = g.append("path")
         .datum(maxVals)
-        .attr("fill", "white")
+        .attr("fill", "#efefef")
         .attr("stroke", "none")
-        // .style('opacity', 0.15)
         .attr("d", bgTMAX)
 
-      // console.log(foo);
-
-      for (var year in foo) {
+      for (var year in dataByYear) {
         buildSVG(year);
       }
-
-
-
-
 
       function buildSVG(year) {
         var className = 'year-' + year;
@@ -176,7 +164,7 @@
           .attr('class', className)
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-        var data = foo[year];
+        var data = dataByYear[year];
 
         var hotDays = 0;
 
