@@ -32,6 +32,11 @@ var lineTMIN = d3.lineRadial()
   .angle(function (d) { return x(d.DATE); })
   .radius(function (d) { return y(d.TMIN); });
 
+var div = d3.select("body").append("div")	
+  .attr("class", "tooltip")				
+  .style("opacity", 0);
+
+var prettyDate = d3.timeFormat('%A, %b %d, %Y');
 
 d3.csv("weather.csv", function (d) {
   d.DATE = parseTime(d.DATE);
@@ -145,22 +150,11 @@ d3.csv("weather.csv", function (d) {
 
     var linePlot1 = g.append('path')
       .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', '#EE6A6A')
-      .style('opacity', 0.15)
       .attr('class', 'tmax')
-      .attr('d', lineTMAX)
-      .on('mouseover', (d) => {
-        // console.log(d3.select(this))
-        console.log('test');
-      });
+      .attr('d', lineTMAX);
 
     var linePlot2 = g.append('path')
       .datum(data)
-      .attr('fill', 'none')
-      // .attr('stroke', '#75B0FF')
-      .attr('stroke', '#75B0FF')
-      .style('opacity', 0.15)
       .attr('class', 'tmin')
       .attr('d', lineTMIN);
 
@@ -178,6 +172,20 @@ d3.csv("weather.csv", function (d) {
         } else {
           return 'transparent'
         }
+      })
+      .on('mouseover', (d) => {
+        div.transition()		
+          .duration(200)		
+          .style("opacity", .9);
+          
+        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="low">${d.TMAX}</div>`)
+          .style("left", (d3.event.pageX) + "px")		
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {		
+        div.transition()		
+          .duration(500)		
+          .style("opacity", 0);	
       });
 
     g.selectAll('.low')
@@ -194,6 +202,20 @@ d3.csv("weather.csv", function (d) {
         } else {
           return 'transparent'
         }
+      })
+      .on('mouseover', (d) => {
+        div.transition()		
+          .duration(200)		
+          .style("opacity", .9);
+
+        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="low">${d.TMIN}</div>`)
+          .style("left", (d3.event.pageX) + "px")		
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {		
+        div.transition()		
+          .duration(500)		
+          .style("opacity", 0);	
       });
 
     // var labels = yTick.append("text")
@@ -257,11 +279,25 @@ d3.csv("weather.csv", function (d) {
   }
 });
 
-$('button').click(function() {
-  let year = $(this).data('src');
+$(document).ready(function() {
 
-  $('.tmin, .tmax').addClass('inactive').removeClass('active');
+  for (var i = 1948; i < 2019; i++) {
+    $('select').append(`<option value="${i}">${i}</option>`);
+  }
 
-  $(`.year-${year} .tmin, .year-${year} .tmax`).removeClass('inactive').addClass('active');
+  $('select').change(function() {
+    let year = $(this).val();
+
+    if (year === 'all') {
+      $('.tmin, .tmax').removeClass('active inactive');
+
+    } else {
+      $('.tmin, .tmax').addClass('inactive').removeClass('active');
+  
+      $(`.year-${year} .tmin, .year-${year} .tmax`).removeClass('inactive').addClass('active');
+    
+      d3.select(`.year-${year}`).raise();
+    }
+  });
 
 });
