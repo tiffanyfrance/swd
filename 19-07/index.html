@@ -39,16 +39,6 @@
       font-family: Arial, Helvetica, sans-serif;
       fill: #000;
     }
-
-    .ring-0 {
-      /* display: none; */
-      /* stroke: #ccc; */
-    }
-
-    .ring-100 {
-      /* fill: #000;
-      opacity: 0.01; */
-    }
   </style>
 </head>
 
@@ -182,8 +172,6 @@
           }
         }
 
-        // console.log(year, hotDays);
-
         x.domain(d3.extent(data, function (d) { return d.DATE; }));
         y.domain([0, 100]);
         // y.domain(d3.extent(data, function (d) { return d.TMAX; }));
@@ -313,10 +301,7 @@
         //     .ease(d3.easeLinear)
         //     .attr("stroke-dashoffset", 0);
       }
-
-
     });
-
 
   </script>
 </body>
