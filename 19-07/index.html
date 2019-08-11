@@ -122,7 +122,7 @@
         }
 
         x.domain(d3.extent(dataByYear[d.year], function (d) { return d.DATE; }));
-        y.domain([0, 100]);
+        y.domain([-8, 105]);
 
         d.angle = x(d.DATE);
         d.radius = y(d.TMAX);
@@ -173,7 +173,7 @@
         }
 
         x.domain(d3.extent(data, function (d) { return d.DATE; }));
-        y.domain([0, 100]);
+        y.domain([-8, 105]);
         // y.domain(d3.extent(data, function (d) { return d.TMAX; }));
         // console.log(d3.extent(data, function (d) { return d.TMIN; }));
 
@@ -201,6 +201,7 @@
           .attr("d", lineTMAX)
           .on('mouseover', (d) => {
             // console.log(d3.select(this))
+            console.log('foo');
           });
 
         var linePlot2 = g.append("path")
