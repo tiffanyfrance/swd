@@ -1,0 +1,38 @@
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  background: #eee;
+  text-align: center;
+}
+
+h1 {
+  font-size: 18px;
+  text-align: center;
+  margin: 20px 0px 10px;
+}
+
+h2 {
+  font-size: 12px;
+}
+
+svg {
+  fill: #333;
+}
+
+text {
+  font-size: 0px;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+  fill: #000;
+}
+
+.inactive {
+  stroke: #ccc;
+}
+
+.active {
+  opacity: .8 !important;
+  stroke-width: 1;
+}
