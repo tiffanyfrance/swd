@@ -41,13 +41,36 @@ text {
   opacity: 0.15;
 }
 
-.inactive {
+.low, .high {
+  fill: auto;
+  visibility: initial;
+}
+
+.inactive path {
   stroke: #ddd;
 }
 
-.active {
+.inactive .low {
+  visibility: hidden;
+}
+
+.inactive .high {
+  visibility: hidden;
+}
+
+.active path {
   opacity: .8 !important;
-  stroke-width: 1; 
+  stroke-width: 0.2; 
+}
+
+.active .low {
+  fill: #75B0FF;
+  visibility: visible;
+}
+
+.active .high {
+  fill: #EE6A6A;
+  visibility: visible;
 }
 
 div.tooltip {	

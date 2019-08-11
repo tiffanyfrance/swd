@@ -103,7 +103,7 @@ d3.csv("weather.csv", function (d) {
   }
 
   function buildSVG(year) {
-    var className = 'year-' + year;
+    var className = 'year year-' + year;
 
     var g = svg.append("g")
       .attr('class', className)
@@ -289,13 +289,13 @@ $(document).ready(function() {
     let year = $(this).val();
 
     if (year === 'all') {
-      $('.tmin, .tmax').removeClass('active inactive');
+      $('.year').removeClass('active inactive');
 
     } else {
-      $('.tmin, .tmax').addClass('inactive').removeClass('active');
+      $('.year').addClass('inactive').removeClass('active');
   
-      $(`.year-${year} .tmin, .year-${year} .tmax`).removeClass('inactive').addClass('active');
-    
+      $(`.year-${year}`).removeClass('inactive').addClass('active');
+
       d3.select(`.year-${year}`).raise();
     }
   });
