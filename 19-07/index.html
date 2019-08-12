@@ -12,20 +12,23 @@
 
 <body>
   <div class="flex-container">
-    <div class="col">
-      <h1>72 years of Highs and Lows in Richmond, VA.</h1>
+    <div class="col col-left">
+      <h1>72 years of Highs and Lows</h1>
+      <h2>NOAA temperature data from Richmond, VA Airfield</h2>
       <h2>
         Dots represent <span style="color:red">100+ Temps</span> and 
         <span style="color:blue">0- Temps</span>
       </h2>
-      <h2>
+      <div class="filter">
         Year: 
-        <select>
-          <option value="all">All</option>
-        </select>
-      </h2>
+        <span class="select-wrapper">
+          <select>
+            <option value="all">All</option>
+          </select>
+        </span>
+      </div>
     </div>
-    <div class="col right"></div>
+    <div class="col col-right"></div>
   </div>
 
   <script

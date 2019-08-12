@@ -11,21 +11,51 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 90vh;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
-.col {
-  width: 50%;
+.col-left {
+  width: 35%;
+  padding: 0 0 0 5%;
+  text-align: left;
+}
+
+.col-right {
+  width: 60%;
+  text-align: left;
 }
 
 h1 {
-  font-size: 18px;
-  text-align: center;
+  font-size: 24px;
   margin: 20px 0px 10px;
 }
 
 h2 {
-  font-size: 12px;
-  margin: 5px;
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+.filter {
+  margin-top: 30px;
+}
+
+.select-wrapper {
+  background: #fff;
+  padding: 1px;
+  margin: 0 5px;
+}
+
+select {
+  background: white;
+  border: none;
+  font-weight: bold;
+  font-family: 'Open sans';
+  font-size: 1em;
+  padding: 10px;
+  border-radius: 0;
+  -webkit-border-radius: 0px;
 }
 
 svg {
@@ -61,11 +91,11 @@ text {
 }
 
 .inactive .low {
-  visibility: hidden;
+  visibility: hidden !important;
 }
 
 .inactive .high {
-  visibility: hidden;
+  visibility: hidden !important;
 }
 
 .active path {
@@ -75,12 +105,12 @@ text {
 
 .active .low {
   fill: #75B0FF;
-  visibility: visible;
+  visibility: visible !important;
 }
 
 .active .high {
   fill: #EE6A6A;
-  visibility: visible;
+  visibility: visible !important;
 }
 
 div.tooltip {	
@@ -94,12 +124,4 @@ div.tooltip {
   border: 0px;		
   border-radius: 8px;			
   pointer-events: none;			
-}
-
-select {
-  background: transparent;
-  border: none;
-  font-weight: bold;
-  font-family: 'Open sans';
-  font-size: 12px;
 }

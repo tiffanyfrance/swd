@@ -1,7 +1,9 @@
-var margin = { top: 0, right: 0, bottom: 0, left: 0 };
+var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+    containerWidth = d3.select('.col-right').node().getBoundingClientRect().width;
 
-var width = 700 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+
+var width = containerWidth - margin.left - margin.right,
+    height = containerWidth - margin.top - margin.bottom;
 
 var innerRadius = 10,
     outerRadius = Math.min(width, height) / 2 - 6;
@@ -10,7 +12,7 @@ var parseTime = d3.timeParse("%Y-%m-%d"),
     formatMonth = d3.timeFormat("%b"),
     fullCircle = 2 * Math.PI;
 
-var svg = d3.select(".right").append("svg")
+var svg = d3.select(".col-right").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -166,11 +168,12 @@ d3.csv("weather.csv", function (d) {
       .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
       .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
       .attr('r', 2)
-      .attr('fill', function (d) {
+      .attr('fill', 'red')
+      .style('visibility', function (d) {
         if (d.TMAX >= 100) {
-          return 'red'
+          return 'visible'
         } else {
-          return 'transparent'
+          return 'hidden'
         }
       })
       .on('mouseover', (d) => {
@@ -196,11 +199,12 @@ d3.csv("weather.csv", function (d) {
       .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
       .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
       .attr('r', 2)
-      .attr('fill', function (d) {
+      .attr('fill', 'blue')
+      .style('visibility', function (d) {
         if (d.TMIN <= 0) {
-          return 'blue'
+          return 'visible'
         } else {
-          return 'transparent'
+          return 'hidden'
         }
       })
       .on('mouseover', (d) => {
