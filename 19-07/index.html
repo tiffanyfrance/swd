@@ -15,10 +15,6 @@
     <div class="col col-left">
       <h1>72 years of Highs and Lows</h1>
       <h2>NOAA temperature data from Richmond, VA Airfield</h2>
-      <h2>
-        Dots represent <span style="color:red">100+ Temps</span> and 
-        <span style="color:blue">0- Temps</span>
-      </h2>
       <div class="filter">
         Year: 
         <span class="select-wrapper">
@@ -27,7 +23,33 @@
           </select>
         </span>
       </div>
+
+      <div class="legend">
+        <span class="legend-1">
+          <svg height="5" width="5">
+            <circle cx="2.5" cy="2.5" r="2.5" fill="blue" />
+            Sorry, your browser does not support inline SVG.  
+          </svg> 
+          TEMPERATURES 0 AND UNDER
+          <br />
+          <svg height="5" width="5">
+            <circle cx="2.5" cy="2.5" r="2.5" fill="red" />
+            Sorry, your browser does not support inline SVG.  
+          </svg> 
+          TEMPERATURES 100 AND OVER
+          <br />
+          <br />
+        </span>
+        <span class="legend-2">
+          <span style="color: #75B0FF">&horbar; </span>
+          LOW TEMPERATURES
+          <br />
+          <span style="color: #EE6A6A;">&horbar; </span>
+          HIGH TEMPERATURES
+        </span>
+      </div>
     </div>
+
     <div class="col col-right"></div>
   </div>
 

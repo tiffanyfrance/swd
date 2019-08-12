@@ -1,18 +1,17 @@
-var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+let margin = { top: 0, right: 0, bottom: 0, left: 0 },
     containerWidth = d3.select('.col-right').node().getBoundingClientRect().width;
 
-
-var width = containerWidth - margin.left - margin.right,
+let width = containerWidth - margin.left - margin.right,
     height = containerWidth - margin.top - margin.bottom;
 
-var innerRadius = 10,
+let innerRadius = 10,
     outerRadius = Math.min(width, height) / 2 - 6;
 
-var parseTime = d3.timeParse("%Y-%m-%d"),
+let parseTime = d3.timeParse("%Y-%m-%d"),
     formatMonth = d3.timeFormat("%b"),
     fullCircle = 2 * Math.PI;
 
-var svg = d3.select(".col-right").append("svg")
+let svg = d3.select(".col-right").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -20,25 +19,25 @@ var svg = d3.select(".col-right").append("svg")
 
 let maxVals = [];
 
-var x = d3.scaleTime()
+let x = d3.scaleTime()
   .range([0, fullCircle]);
 
-var y = d3.scaleRadial()
+let y = d3.scaleRadial()
   .range([innerRadius, outerRadius]);
 
-var lineTMAX = d3.lineRadial()
+let lineTMAX = d3.lineRadial()
   .angle(function (d) { return x(d.DATE); })
   .radius(function (d) { return y(d.TMAX); });
 
-var lineTMIN = d3.lineRadial()
+let lineTMIN = d3.lineRadial()
   .angle(function (d) { return x(d.DATE); })
   .radius(function (d) { return y(d.TMIN); });
 
-var div = d3.select("body").append("div")	
+let div = d3.select("body").append("div")	
   .attr("class", "tooltip")				
   .style("opacity", 0);
 
-var prettyDate = d3.timeFormat('%A, %b %d, %Y');
+let prettyDate = d3.timeFormat('%a, %b %d, %Y');
 
 d3.csv("weather.csv", function (d) {
   d.DATE = parseTime(d.DATE);
@@ -181,7 +180,7 @@ d3.csv("weather.csv", function (d) {
           .duration(200)		
           .style("opacity", .9);
           
-        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="low">${d.TMAX}</div>`)
+        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="red">${d.TMAX}°F</div>`)
           .style("left", (d3.event.pageX) + "px")		
           .style("top", (d3.event.pageY - 28) + "px");
       })
@@ -212,7 +211,7 @@ d3.csv("weather.csv", function (d) {
           .duration(200)		
           .style("opacity", .9);
 
-        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="low">${d.TMIN}</div>`)
+        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="blue">${d.TMIN}°F</div>`)
           .style("left", (d3.event.pageX) + "px")		
           .style("top", (d3.event.pageY - 28) + "px");
       })
@@ -294,13 +293,15 @@ $(document).ready(function() {
 
     if (year === 'all') {
       $('.year').removeClass('active inactive');
+      $('.legend-1').show();
 
     } else {
       $('.year').addClass('inactive').removeClass('active');
-  
       $(`.year-${year}`).removeClass('inactive').addClass('active');
 
       d3.select(`.year-${year}`).raise();
+
+      $('.legend-1').hide();
     }
   });
 

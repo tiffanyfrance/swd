@@ -38,7 +38,19 @@ h2 {
 }
 
 .filter {
-  margin-top: 30px;
+  margin-top: 10px;
+}
+
+.legend {
+  margin-top: 70px;
+  font-size: 10px;
+  font-weight: 100;
+  line-height: 1.75;
+}
+
+.legend svg {
+  margin-bottom: 1px;
+  margin-right: 2px;
 }
 
 .select-wrapper {
@@ -48,7 +60,7 @@ h2 {
 }
 
 select {
-  background: white;
+  background: #fff;
   border: none;
   font-weight: bold;
   font-family: 'Open sans';
@@ -116,12 +128,24 @@ text {
 div.tooltip {	
   position: absolute;			
   text-align: center;			
-  width: 60px;					
-  height: 28px;					
-  padding: 2px;				
-  font: 12px sans-serif;		
-  /* background: lightsteelblue;	 */
-  border: 0px;		
-  border-radius: 8px;			
-  pointer-events: none;			
+  width: 100px;					
+  height: 40px;					
+  padding: 8px;				
+  font-size: 10px;
+  text-transform: uppercase;		
+  background: white;		
+  pointer-events: none;	
+  border-radius: 3px;		
+}
+
+.blue {
+  font-size: 14px;
+  margin: 5px 0;
+  color: blue;
+}
+
+.red {
+  font-size: 14px;
+  margin: 5px 0;
+  color: red;
 }
