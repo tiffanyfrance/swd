@@ -7,6 +7,16 @@ body {
   text-align: center;
 }
 
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.col {
+  width: 50%;
+}
+
 h1 {
   font-size: 18px;
   text-align: center;

@@ -10,7 +10,7 @@ var parseTime = d3.timeParse("%Y-%m-%d"),
     formatMonth = d3.timeFormat("%b"),
     fullCircle = 2 * Math.PI;
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select(".right").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
