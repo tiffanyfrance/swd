@@ -280,6 +280,8 @@ d3.csv("weather.csv", function (d) {
     //     .ease(d3.easeLinear)
     //     .attr("stroke-dashoffset", 0);
   }
+
+  console.log(dataByYear);
 });
 
 $(document).ready(function() {
@@ -298,11 +300,16 @@ $(document).ready(function() {
     } else {
       $('.year').addClass('inactive').removeClass('active');
       $(`.year-${year}`).removeClass('inactive').addClass('active');
+      $('.legend-1').hide();
+      $('.legend-3').empty();
+
+      // buildHigh(year);
+      // buildLow(year);
 
       d3.select(`.year-${year}`).raise();
-
-      $('.legend-1').hide();
     }
   });
 
 });
+
+
