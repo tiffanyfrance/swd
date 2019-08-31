@@ -1,23 +1,21 @@
 let margin = { top: 0, right: 0, bottom: 0, left: 0 },
-    containerWidth = d3.select('.col-right').node().getBoundingClientRect().width;
+  containerWidth = d3.select('.col-right').node().getBoundingClientRect().width;
 
 let width = containerWidth - margin.left - margin.right,
-    height = containerWidth - margin.top - margin.bottom;
+  height = containerWidth - margin.top - margin.bottom;
 
 let innerRadius = 10,
-    outerRadius = Math.min(width, height) / 2 - 6;
+  outerRadius = Math.min(width, height) / 2 - 6;
 
 let parseTime = d3.timeParse("%Y-%m-%d"),
-    formatMonth = d3.timeFormat("%b"),
-    fullCircle = 2 * Math.PI;
+  formatMonth = d3.timeFormat("%b"),
+  fullCircle = 2 * Math.PI;
 
 let svg = d3.select(".col-right").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-let maxVals = [];
 
 let x = d3.scaleTime()
   .range([0, fullCircle]);
@@ -33,8 +31,8 @@ let lineTMIN = d3.lineRadial()
   .angle(function (d) { return x(d.DATE); })
   .radius(function (d) { return y(d.TMIN); });
 
-let div = d3.select("body").append("div")	
-  .attr("class", "tooltip")				
+let div = d3.select("body").append("div")
+  .attr("class", "tooltip")
   .style("opacity", 0);
 
 let prettyDate = d3.timeFormat('%a, %b %d, %Y');
@@ -48,6 +46,18 @@ d3.csv("weather.csv", function (d) {
 }, function (error, data) {
   if (error) throw error;
 
+  let dataByYear = getDataByYear(data);
+
+  buildBackgroundPath(dataByYear);
+
+  for (let year in dataByYear) {
+    buildYear(year, svg, dataByYear[year]);
+  }
+
+  console.log(dataByYear);
+});
+
+function getDataByYear(data) {
   let dataByYear = {};
 
   for (let d of data) {
@@ -62,6 +72,29 @@ d3.csv("weather.csv", function (d) {
 
     arr.push(d);
   }
+
+  return dataByYear;
+}
+
+function buildBackgroundPath(dataByYear) {
+  let maxVals = getMaxVals(dataByYear);
+
+  let bgTMAX = d3.lineRadial()
+    .angle(function (d) { return d.angle; })
+    .radius(function (d) { return d.radius; });
+
+  let g = svg.append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+  g.append("path")
+    .datum(maxVals)
+    .attr("fill", "#efefef")
+    .attr("stroke", "none")
+    .attr("d", bgTMAX)
+}
+
+function getMaxVals(dataByYear) {
+  let maxVals = [];
 
   for (let i = 0; i < 365; i++) {
 
@@ -86,211 +119,118 @@ d3.csv("weather.csv", function (d) {
     maxVals[i] = d;
   }
 
-  var bgTMAX = d3.lineRadial()
-    .angle(function (d) { return d.angle; })
-    .radius(function (d) { return d.radius; });
+  return maxVals;
+}
 
-  var g = svg.append("g")
+function buildYear(year, svg, data) {
+  let className = 'year year-' + year;
+
+  let g = svg.append("g")
+    .attr('class', className)
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  g.append("path")
-    .datum(maxVals)
-    .attr("fill", "#efefef")
-    .attr("stroke", "none")
-    .attr("d", bgTMAX)
+  x.domain(d3.extent(data, function (d) { return d.DATE; }));
+  y.domain([-8, 105]);
 
-  for (var year in dataByYear) {
-    buildSVG(year);
-  }
+  let linePlot1 = g.append('path')
+    .datum(data)
+    .attr('class', 'tmax')
+    .attr('d', lineTMAX);
 
-  function buildSVG(year) {
-    var className = 'year year-' + year;
+  let linePlot2 = g.append('path')
+    .datum(data)
+    .attr('class', 'tmin')
+    .attr('d', lineTMIN);
 
-    var g = svg.append("g")
-      .attr('class', className)
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-    var data = dataByYear[year];
-
-    var hotDays = 0;
-
-    for (var d of data) {
-      if (d.TMAX > 100) {
-        hotDays++
+  g.selectAll('.high')
+    .data(data)
+    .enter()
+    .append('circle')
+    .attr('class', 'high')
+    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
+    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
+    .attr('r', 2)
+    .attr('fill', 'red')
+    .style('visibility', function (d) {
+      if (d.TMAX >= 100) {
+        return 'visible'
+      } else {
+        return 'hidden'
       }
-    }
+    })
+    .on('mouseover', (d) => {
+      div.transition()
+        .duration(200)
+        .style("opacity", .9);
 
-    var coldDays = 0;
+      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="red">${d.TMAX}°F</div>`)
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function (d) {
+      div.transition()
+        .duration(500)
+        .style("opacity", 0);
+    });
 
-    for (var d of data) {
-      if (d.TMIN < 0) {
-        coldDays++
+  g.selectAll('.low')
+    .data(data)
+    .enter()
+    .append('circle')
+    .attr('class', 'low')
+    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
+    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
+    .attr('r', 2)
+    .attr('fill', 'blue')
+    .style('visibility', function (d) {
+      if (d.TMIN <= 0) {
+        return 'visible'
+      } else {
+        return 'hidden'
       }
-    }
+    })
+    .on('mouseover', (d) => {
+      div.transition()
+        .duration(200)
+        .style("opacity", .9);
 
-    x.domain(d3.extent(data, function (d) { return d.DATE; }));
-    y.domain([-8, 105]);
-    // y.domain(d3.extent(data, function (d) { return d.TMAX; }));
-    // console.log(d3.extent(data, function (d) { return d.TMIN; }));
+      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="blue">${d.TMIN}°F</div>`)
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function (d) {
+      div.transition()
+        .duration(500)
+        .style("opacity", 0);
+    });
 
-    // var yAxis = g.append("g")
-    //   .attr("text-anchor", "middle")
-    //   .attr('class', 'y-axis');
+  let xAxis = g.append("g");
 
-    // var yTick = yAxis
-    //   .selectAll(".y-axis")
-    //   .data(y.ticks(1))
-    //   .enter().append("g");
+  let xTick = xAxis
+    .selectAll("g")
+    .data(x.ticks(12))
+    .enter().append("g")
+    .attr("text-anchor", "middle")
+    .attr("transform", function (d) {
+      return "rotate(" + ((x(d)) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)";
+    });
 
-    // yTick.append("circle")
-    //   .attr("fill", "transparent")
-    //   .attr("stroke", "#eee")
-    //   .attr('stroke-width', 1)
-    //   .attr('class', function (d, i) { return 'ring-' + d; })
-    //   .attr("r", y);
+  let title = g.append("g")
+    .attr("class", "title")
+    .append("text")
+    .attr("dy", "-0.2em")
+    .attr("text-anchor", "middle")
+    .text(year)
+}
 
-    var linePlot1 = g.append('path')
-      .datum(data)
-      .attr('class', 'tmax')
-      .attr('d', lineTMAX);
 
-    var linePlot2 = g.append('path')
-      .datum(data)
-      .attr('class', 'tmin')
-      .attr('d', lineTMIN);
+$(document).ready(function () {
 
-    g.selectAll('.high')
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('class', 'high')
-      .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
-      .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
-      .attr('r', 2)
-      .attr('fill', 'red')
-      .style('visibility', function (d) {
-        if (d.TMAX >= 100) {
-          return 'visible'
-        } else {
-          return 'hidden'
-        }
-      })
-      .on('mouseover', (d) => {
-        div.transition()		
-          .duration(200)		
-          .style("opacity", .9);
-          
-        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="red">${d.TMAX}°F</div>`)
-          .style("left", (d3.event.pageX) + "px")		
-          .style("top", (d3.event.pageY - 28) + "px");
-      })
-      .on("mouseout", function(d) {		
-        div.transition()		
-          .duration(500)		
-          .style("opacity", 0);	
-      });
-
-    g.selectAll('.low')
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('class', 'low')
-      .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
-      .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
-      .attr('r', 2)
-      .attr('fill', 'blue')
-      .style('visibility', function (d) {
-        if (d.TMIN <= 0) {
-          return 'visible'
-        } else {
-          return 'hidden'
-        }
-      })
-      .on('mouseover', (d) => {
-        div.transition()		
-          .duration(200)		
-          .style("opacity", .9);
-
-        div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="blue">${d.TMIN}°F</div>`)
-          .style("left", (d3.event.pageX) + "px")		
-          .style("top", (d3.event.pageY - 28) + "px");
-      })
-      .on("mouseout", function(d) {		
-        div.transition()		
-          .duration(500)		
-          .style("opacity", 0);	
-      });
-
-    // var labels = yTick.append("text")
-    //     .attr("y", function(d) { return -y(d); })
-    //     .attr("dy", "0.35em")
-    //     .text(function(d) { return d; });
-
-    // yTick.append("text")
-    //   .attr("y", function(d) { return -y(d); })
-    //   .attr("dy", "0.35em")
-    //   .text(function(d) { return d; });
-
-    var xAxis = g.append("g");
-
-    var xTick = xAxis
-      .selectAll("g")
-      .data(x.ticks(12))
-      .enter().append("g")
-      .attr("text-anchor", "middle")
-      .attr("transform", function (d) {
-        return "rotate(" + ((x(d)) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)";
-      });
-
-    // xTick.append("line")
-    //   .attr("x2", -5)
-    //   .attr("stroke", "#000");
-
-    // xTick.append("text")
-    //   .attr("transform", function (d) {
-    //     var angle = x(d);
-    //     return ((angle < Math.PI / 2) || 
-    //       (angle > (Math.PI * 3 / 2))) ? "rotate(90)translate(0,22)" : "rotate(-90)translate(0, -15)";
-    //   })
-    //   .text(function (d) {
-    //     return formatMonth(d);
-    //   })
-    //   .attr("opacity", 0.6)
-
-    var title = g.append("g")
-      .attr("class", "title")
-      .append("text")
-      .attr("dy", "-0.2em")
-      .attr("text-anchor", "middle")
-      .text(year)
-
-    // var subtitle = g.append("text")
-    // 		.attr("dy", "1em")
-    //     .attr("text-anchor", "middle")
-    // 		.attr("opacity", 0.6)
-    // 		.text("16/17");  
-
-    // var lineLength = linePlot.node().getTotalLength();
-
-    // linePlot
-    //   .attr("stroke-dasharray", lineLength + " " + lineLength)
-    //   .attr("stroke-dashoffset", -lineLength)
-    //   .transition()
-    //     .duration(2000)
-    //     .ease(d3.easeLinear)
-    //     .attr("stroke-dashoffset", 0);
-  }
-
-  console.log(dataByYear);
-});
-
-$(document).ready(function() {
-
-  for (var i = 1948; i < 2019; i++) {
+  for (let i = 1948; i < 2019; i++) {
     $('select').append(`<option value="${i}">${i}</option>`);
   }
 
-  $('select').change(function() {
+  $('select').change(function () {
     let year = $(this).val();
 
     if (year === 'all') {
@@ -303,12 +243,16 @@ $(document).ready(function() {
       $('.legend-1').hide();
       $('.legend-3').empty();
 
-      // buildHigh(year);
-      // buildLow(year);
-
       d3.select(`.year-${year}`).raise();
     }
   });
+
+  //.tmin, .low
+
+  $('.high-checkbox').on('change', function (event) {
+    console.log(event.target.checked)
+  });
+
 
 });
 
