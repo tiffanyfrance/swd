@@ -51,7 +51,7 @@ d3.csv("weather.csv", function (d) {
   buildBackgroundPath(dataByYear);
 
   for (let year in dataByYear) {
-    buildYear(year, svg, dataByYear[year]);
+    buildYearGraph(year, svg, dataByYear[year]);
   }
 
   console.log(dataByYear);
@@ -122,7 +122,7 @@ function getMaxVals(dataByYear) {
   return maxVals;
 }
 
-function buildYear(year, svg, data) {
+function buildYearGraph(year, svg, data) {
   let className = 'year year-' + year;
 
   let g = svg.append("g")
@@ -132,12 +132,12 @@ function buildYear(year, svg, data) {
   x.domain(d3.extent(data, function (d) { return d.DATE; }));
   y.domain([-8, 105]);
 
-  let linePlot1 = g.append('path')
+  g.append('path')
     .datum(data)
     .attr('class', 'tmax')
     .attr('d', lineTMAX);
 
-  let linePlot2 = g.append('path')
+  g.append('path')
     .datum(data)
     .attr('class', 'tmin')
     .attr('d', lineTMIN);
@@ -203,24 +203,6 @@ function buildYear(year, svg, data) {
         .duration(500)
         .style("opacity", 0);
     });
-
-  let xAxis = g.append("g");
-
-  let xTick = xAxis
-    .selectAll("g")
-    .data(x.ticks(12))
-    .enter().append("g")
-    .attr("text-anchor", "middle")
-    .attr("transform", function (d) {
-      return "rotate(" + ((x(d)) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)";
-    });
-
-  let title = g.append("g")
-    .attr("class", "title")
-    .append("text")
-    .attr("dy", "-0.2em")
-    .attr("text-anchor", "middle")
-    .text(year)
 }
 
 
