@@ -24,12 +24,12 @@ let y = d3.scaleRadial()
   .range([innerRadius, outerRadius]);
 
 let lineTMAX = d3.lineRadial()
-  .angle(function (d) { return x(d.DATE); })
-  .radius(function (d) { return y(d.TMAX); });
+  .angle(d => x(d.DATE))
+  .radius(d => y(d.TMAX));
 
 let lineTMIN = d3.lineRadial()
-  .angle(function (d) { return x(d.DATE); })
-  .radius(function (d) { return y(d.TMIN); });
+  .angle(d => x(d.DATE))
+  .radius(d => y(d.TMIN));
 
 let div = d3.select("body").append("div")
   .attr("class", "tooltip")
@@ -37,13 +37,13 @@ let div = d3.select("body").append("div")
 
 let prettyDate = d3.timeFormat('%a, %b %d, %Y');
 
-d3.csv("weather.csv", function (d) {
+d3.csv("weather.csv", (d) => {
   d.DATE = parseTime(d.DATE);
   d.TMAX = +d.TMAX;
   d.TMIN = +d.TMIN;
 
   return d;
-}, function (error, data) {
+}, (error, data) => {
   if (error) throw error;
 
   let dataByYear = getDataByYear(data);
@@ -80,8 +80,8 @@ function buildBackgroundPath(dataByYear) {
   let maxVals = getMaxVals(dataByYear);
 
   let bgTMAX = d3.lineRadial()
-    .angle(function (d) { return d.angle; })
-    .radius(function (d) { return d.radius; });
+    .angle(d => d.angle)
+    .radius(d => d.radius);
 
   let g = svg.append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
@@ -110,7 +110,7 @@ function getMaxVals(dataByYear) {
       }
     }
 
-    x.domain(d3.extent(dataByYear[d.year], function (d) { return d.DATE; }));
+    x.domain(d3.extent(dataByYear[d.year], d => d.DATE));
     y.domain([-8, 105]);
 
     d.angle = x(d.DATE);
@@ -129,7 +129,7 @@ function buildYearGraph(year, svg, data) {
     .attr('class', className)
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  x.domain(d3.extent(data, function (d) { return d.DATE; }));
+  x.domain(d3.extent(data, d => d.DATE));
   y.domain([-8, 105]);
 
   buildTemperatureGroup(g, data, lineTMAX, 'TMAX', d => d.TMAX >= 100);
@@ -143,22 +143,16 @@ function buildTemperatureGroup(parent, data, line, keyName, isVisible) {
   g.append('path')
     .datum(data)
     .attr('d', line);
-  
+
   g.selectAll(`.${keyName} circle`)
     .data(data)
     .enter()
     .append('circle')
-    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
-    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
+    .attr('cx', d => Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]))
+    .attr('cy', d => Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]))
     .attr('r', 2)
-    .style('visibility', function(d) {
-      if (isVisible(d)) {
-        return 'visible'
-      } else {
-        return 'hidden'
-      }
-    })
-    .on('mouseover', (d) => {
+    .style('visibility', d => isVisible(d) ? 'visible' : 'hidden')
+    .on('mouseover', d => {
       div.transition()
         .duration(200)
         .style("opacity", .9);
@@ -167,15 +161,14 @@ function buildTemperatureGroup(parent, data, line, keyName, isVisible) {
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
     })
-    .on("mouseout", function (d) {
+    .on("mouseout", d => {
       div.transition()
         .duration(500)
         .style("opacity", 0);
     });
 }
 
-$(document).ready(function () {
-
+$(document).ready(() => {
   for (let i = 1948; i < 2019; i++) {
     $('select').append(`<option value="${i}">${i}</option>`);
   }
@@ -197,15 +190,8 @@ $(document).ready(function () {
     }
   });
 
-  $('.high-checkbox').on('change', function (event) {
-    $('.TMAX').toggle();
-  });
-
-  $('.low-checkbox').on('change', function (event) {
-    $('.TMIN').toggle();
-  });
-
-
+  $('.high-checkbox').on('change', () => $('.TMAX').toggle());
+  $('.low-checkbox').on('change', () => $('.TMIN').toggle());
 });
 
 
