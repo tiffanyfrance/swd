@@ -132,19 +132,19 @@ function buildYearGraph(year, svg, data) {
   x.domain(d3.extent(data, function (d) { return d.DATE; }));
   y.domain([-8, 105]);
 
-  buildTemperatureGroup(g, data, 'high', lineTMAX, 'TMAX', d => d.TMAX >= 100);
-  buildTemperatureGroup(g, data, 'low', lineTMIN, 'TMIN', d => d.TMIN <= 0);
+  buildTemperatureGroup(g, data, lineTMAX, 'TMAX', d => d.TMAX >= 100);
+  buildTemperatureGroup(g, data, lineTMIN, 'TMIN', d => d.TMIN <= 0);
 }
 
-function buildTemperatureGroup(parent, data, className, line, keyName, isVisible) {
+function buildTemperatureGroup(parent, data, line, keyName, isVisible) {
   let g = parent.append("g")
-    .attr('class', className);
+    .attr('class', keyName);
 
   g.append('path')
     .datum(data)
     .attr('d', line);
   
-  g.selectAll(`.${className} circle`)
+  g.selectAll(`.${keyName} circle`)
     .data(data)
     .enter()
     .append('circle')
@@ -163,7 +163,7 @@ function buildTemperatureGroup(parent, data, className, line, keyName, isVisible
         .duration(200)
         .style("opacity", .9);
 
-      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="${className}">${d[keyName]}°F</div>`)
+      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="${keyName}">${d[keyName]}°F</div>`)
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
     })
@@ -197,7 +197,6 @@ $(document).ready(function () {
     }
   });
 
-  //.tmin, .low
   $('.high-checkbox').on('change', function (event) {
     console.log(event.target.checked)
   });

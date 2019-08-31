@@ -85,13 +85,13 @@ text {
   fill: #000;
 }
 
-.low path {
+.TMIN path {
   fill: none;
   stroke: #75B0FF;
   opacity: 0.15;
 }
 
-.high path {
+.TMAX path {
   fill: none;
   stroke: #EE6A6A;
   opacity: 0.15;
@@ -106,16 +106,16 @@ text {
   stroke-width: 0.2; 
 }
 
-.high circle, .low circle {
+.TMAX circle, .TMIN circle {
   fill: auto;
   visibility: initial;
 }
 
-.low circle {
+.TMIN circle {
   fill: blue;
 }
 
-.high circle {
+.TMAX circle {
   fill: red;
 }
 
@@ -123,12 +123,12 @@ text {
   visibility: hidden !important;
 }
 
-.active .low circle {
+.active .TMIN circle {
   fill: rgb(64, 145, 250);
   visibility: visible !important;
 }
 
-.active .high circle {
+.active .TMAX circle {
   fill: rgb(238, 51, 51);
   visibility: visible !important;
 }
@@ -146,13 +146,13 @@ div.tooltip {
   border-radius: 3px;		
 }
 
-.tooltip .low {
+.tooltip .TMIN {
   font-size: 14px;
   margin: 5px 0;
   color: blue;
 }
 
-.tooltip .high {
+.tooltip .TMAX {
   font-size: 14px;
   margin: 5px 0;
   color: red;
