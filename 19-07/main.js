@@ -132,25 +132,25 @@ function buildYearGraph(year, svg, data) {
   x.domain(d3.extent(data, function (d) { return d.DATE; }));
   y.domain([-8, 105]);
 
-  buildTemperatureGroup(g, data, 'tmax', lineTMAX, 'high', 'TMAX', 'red', d => d.TMAX >= 100);
-  buildTemperatureGroup(g, data, 'tmin', lineTMIN, 'low', 'TMIN', 'blue', d => d.TMIN <= 0);
+  buildTemperatureGroup(g, data, 'high', lineTMAX, 'TMAX', d => d.TMAX >= 100);
+  buildTemperatureGroup(g, data, 'low', lineTMIN, 'TMIN', d => d.TMIN <= 0);
 }
 
-function buildTemperatureGroup(g, data, lineClassName, line, circleClassName, keyName, color, isVisible) {
+function buildTemperatureGroup(parent, data, className, line, keyName, isVisible) {
+  let g = parent.append("g")
+    .attr('class', className);
+
   g.append('path')
     .datum(data)
-    .attr('class', lineClassName)
     .attr('d', line);
   
-  g.selectAll(`.${circleClassName}`)
+  g.selectAll(`.${className} circle`)
     .data(data)
     .enter()
     .append('circle')
-    .attr('class', circleClassName)
     .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
     .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
     .attr('r', 2)
-    .attr('fill', color)
     .style('visibility', function(d) {
       if (isVisible(d)) {
         return 'visible'
@@ -163,7 +163,7 @@ function buildTemperatureGroup(g, data, lineClassName, line, circleClassName, ke
         .duration(200)
         .style("opacity", .9);
 
-      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="${color}">${d[keyName]}°F</div>`)
+      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="${className}">${d[keyName]}°F</div>`)
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
     })
@@ -173,7 +173,6 @@ function buildTemperatureGroup(g, data, lineClassName, line, circleClassName, ke
         .style("opacity", 0);
     });
 }
-
 
 $(document).ready(function () {
 
@@ -199,7 +198,6 @@ $(document).ready(function () {
   });
 
   //.tmin, .low
-
   $('.high-checkbox').on('change', function (event) {
     console.log(event.target.checked)
   });
