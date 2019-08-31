@@ -23,14 +23,6 @@ let x = d3.scaleTime()
 let y = d3.scaleRadial()
   .range([innerRadius, outerRadius]);
 
-let lineTMAX = d3.lineRadial()
-  .angle(d => x(d.DATE))
-  .radius(d => y(d.TMAX));
-
-let lineTMIN = d3.lineRadial()
-  .angle(d => x(d.DATE))
-  .radius(d => y(d.TMIN));
-
 let div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
@@ -132,13 +124,17 @@ function buildYearGraph(year, svg, data) {
   x.domain(d3.extent(data, d => d.DATE));
   y.domain([-8, 105]);
 
-  buildTemperatureGroup(g, data, lineTMAX, 'TMAX', d => d.TMAX >= 100);
-  buildTemperatureGroup(g, data, lineTMIN, 'TMIN', d => d.TMIN <= 0);
+  buildTemperatureGroup(g, data, 'TMAX', d => d.TMAX >= 100);
+  buildTemperatureGroup(g, data, 'TMIN', d => d.TMIN <= 0);
 }
 
-function buildTemperatureGroup(parent, data, line, keyName, isVisible) {
+function buildTemperatureGroup(parent, data, keyName, isVisible) {
   let g = parent.append("g")
     .attr('class', keyName);
+
+  let line = d3.lineRadial()
+    .angle(d => x(d.DATE))
+    .radius(d => y(d[keyName]));
 
   g.append('path')
     .datum(data)
