@@ -132,27 +132,27 @@ function buildYearGraph(year, svg, data) {
   x.domain(d3.extent(data, function (d) { return d.DATE; }));
   y.domain([-8, 105]);
 
+  buildTemperatureGroup(g, data, 'tmax', lineTMAX, 'high', 'TMAX', 'red', d => d.TMAX >= 100);
+  buildTemperatureGroup(g, data, 'tmin', lineTMIN, 'low', 'TMIN', 'blue', d => d.TMIN <= 0);
+}
+
+function buildTemperatureGroup(g, data, lineClassName, line, circleClassName, keyName, color, isVisible) {
   g.append('path')
     .datum(data)
-    .attr('class', 'tmax')
-    .attr('d', lineTMAX);
-
-  g.append('path')
-    .datum(data)
-    .attr('class', 'tmin')
-    .attr('d', lineTMIN);
-
-  g.selectAll('.high')
+    .attr('class', lineClassName)
+    .attr('d', line);
+  
+  g.selectAll(`.${circleClassName}`)
     .data(data)
     .enter()
     .append('circle')
-    .attr('class', 'high')
-    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
-    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMAX); })
+    .attr('class', circleClassName)
+    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
+    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]); })
     .attr('r', 2)
-    .attr('fill', 'red')
-    .style('visibility', function (d) {
-      if (d.TMAX >= 100) {
+    .attr('fill', color)
+    .style('visibility', function(d) {
+      if (isVisible(d)) {
         return 'visible'
       } else {
         return 'hidden'
@@ -163,38 +163,7 @@ function buildYearGraph(year, svg, data) {
         .duration(200)
         .style("opacity", .9);
 
-      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="red">${d.TMAX}°F</div>`)
-        .style("left", (d3.event.pageX) + "px")
-        .style("top", (d3.event.pageY - 28) + "px");
-    })
-    .on("mouseout", function (d) {
-      div.transition()
-        .duration(500)
-        .style("opacity", 0);
-    });
-
-  g.selectAll('.low')
-    .data(data)
-    .enter()
-    .append('circle')
-    .attr('class', 'low')
-    .attr('cx', function (d) { return Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
-    .attr('cy', function (d) { return Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d.TMIN); })
-    .attr('r', 2)
-    .attr('fill', 'blue')
-    .style('visibility', function (d) {
-      if (d.TMIN <= 0) {
-        return 'visible'
-      } else {
-        return 'hidden'
-      }
-    })
-    .on('mouseover', (d) => {
-      div.transition()
-        .duration(200)
-        .style("opacity", .9);
-
-      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="blue">${d.TMIN}°F</div>`)
+      div.html(`<div class="date">${prettyDate(d.DATE)}</div><div class="${color}">${d[keyName]}°F</div>`)
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
     })
