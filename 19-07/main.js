@@ -198,7 +198,11 @@ $(document).ready(function () {
   });
 
   $('.high-checkbox').on('change', function (event) {
-    console.log(event.target.checked)
+    $('.TMAX').toggle();
+  });
+
+  $('.low-checkbox').on('change', function (event) {
+    $('.TMIN').toggle();
   });
 
 
