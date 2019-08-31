@@ -40,6 +40,27 @@ d3.csv("weather.csv", (d) => {
 
   let dataByYear = getDataByYear(data);
 
+  // let averageTMAX = Array(366).fill(0);
+  // let averageTMIN = Array(366).fill(0);
+  // let count = Array(366).fill(0);
+
+  // for (let year in dataByYear) {
+  //   let days = dataByYear[year];
+
+  //   for (let i = 0; i < days.length; i++) {
+  //     averageTMAX[i] += days[i].TMAX;
+  //     averageTMIN[i] += days[i].TMIN;
+  //     count[i]++;
+  //   }
+  // }
+
+  // for (let i = 0; i < count.length; i++) {
+  //   averageTMAX[i] /= count[i];
+  //   averageTMIN[i] /= count[i];
+  // }
+
+  // console.log(average, count)
+
   buildBackgroundPath(dataByYear);
 
   for (let year in dataByYear) {
@@ -51,21 +72,30 @@ d3.csv("weather.csv", (d) => {
 
 function getDataByYear(data) {
   let dataByYear = {};
+  let dataByDay = {};
 
   for (let d of data) {
     let year = d.DATE.toISOString().substr(0, 4);
+    addToMap(dataByYear, year, d);
 
-    let arr = dataByYear[year];
-
-    if (!arr) {
-      arr = [];
-      dataByYear[year] = arr;
-    }
-
-    arr.push(d);
+    let monthDay = d.DATE.toISOString().substr(5, 5);
+    addToMap(dataByDay, monthDay, d);
   }
 
+  console.log(dataByDay);
+
   return dataByYear;
+}
+
+function addToMap(map, key, d) {
+  let arr = map[key];
+
+  if (!arr) {
+    arr = [];
+    map[key] = arr;
+  }
+
+  arr.push(d);
 }
 
 function buildBackgroundPath(dataByYear) {
