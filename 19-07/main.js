@@ -17,17 +17,14 @@ let svg = d3.select(".col-right").append("svg")
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-let x = d3.scaleTime()
-  .range([0, fullCircle]);
-
-let y = d3.scaleRadial()
-  .range([innerRadius, outerRadius]);
-
 let div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
 let prettyDate = d3.timeFormat('%a, %b %d, %Y');
+
+const animDelay = 1000;
+const animYearOffset = 100;
 
 d3.csv("weather.csv", (d) => {
   d.DATE = parseTime(d.DATE);
@@ -63,9 +60,13 @@ d3.csv("weather.csv", (d) => {
 
   buildBackgroundPath(dataByYear);
 
-  for (let year in dataByYear) {
-    buildYearGraph(year, svg, dataByYear[year]);
-  }
+  setTimeout(() => {
+    let i = 0;
+    for (let year in dataByYear) {
+      setTimeout(buildYearGraph, i * animYearOffset, year, svg, dataByYear[year], i + 1)
+      i++;
+    }
+  }, animDelay);
 
   console.log(dataByYear);
 });
@@ -132,6 +133,12 @@ function getMaxVals(dataByYear) {
       }
     }
 
+    let x = d3.scaleTime()
+      .range([0, fullCircle]);
+
+    let y = d3.scaleRadial()
+      .range([innerRadius, outerRadius]);
+
     x.domain(d3.extent(dataByYear[d.year], d => d.DATE));
     y.domain([-8, 105]);
 
@@ -144,23 +151,38 @@ function getMaxVals(dataByYear) {
   return maxVals;
 }
 
-function buildYearGraph(year, svg, data) {
+function buildYearGraph(year, svg, data, count) {
   let className = 'year year-' + year;
 
   let g = svg.append("g")
     .attr('class', className)
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  x.domain(d3.extent(data, d => d.DATE));
-  y.domain([-8, 105]);
+  buildTemperatureGroup(g, data, 'TMAX', d => d.TMAX >= 100, count);
+  buildTemperatureGroup(g, data, 'TMIN', d => d.TMIN <= 0, count);
 
-  buildTemperatureGroup(g, data, 'TMAX', d => d.TMAX >= 100);
-  buildTemperatureGroup(g, data, 'TMIN', d => d.TMIN <= 0);
+  // anime({
+  //   targets: `.year-${year} path`,
+  //   strokeDashoffset: [anime.setDashoffset, 0],
+  //   easing: 'easeInOutSine',
+  //   duration: 1500,
+  // });
+
+  $('#title-years').text(count);
 }
 
-function buildTemperatureGroup(parent, data, keyName, isVisible) {
+function buildTemperatureGroup(parent, data, keyName, isVisible, count) {
   let g = parent.append("g")
     .attr('class', keyName);
+
+  let x = d3.scaleTime()
+    .range([0, fullCircle]);
+
+  let y = d3.scaleRadial()
+    .range([innerRadius, outerRadius]);
+
+  x.domain(d3.extent(data, d => d.DATE));
+  y.domain([-8, 105]);
 
   let line = d3.lineRadial()
     .angle(d => x(d.DATE))
@@ -170,14 +192,25 @@ function buildTemperatureGroup(parent, data, keyName, isVisible) {
     .datum(data)
     .attr('d', line);
 
-  g.selectAll(`.${keyName} circle`)
+  let visibleCircles = data.filter(isVisible);
+  buildCircles(g, keyName, visibleCircles, 'visible', x, y);
+
+  setTimeout(() => {
+    let hiddenCircles = data.filter(d => !isVisible(d));
+    buildCircles(g, keyName, hiddenCircles, 'hidden', x, y);
+  }, (72 - count) * animYearOffset);
+}
+
+function buildCircles(g, keyName, data, visibility, x, y) {
+  g.selectAll(`.${keyName} circle.circle-${visibility}`)
     .data(data)
     .enter()
     .append('circle')
+    .attr('class', `circle-${visibility}`)
     .attr('cx', d => Math.cos(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]))
     .attr('cy', d => Math.sin(x(d.DATE) - (Math.PI / 2)) * y(d[keyName]))
     .attr('r', 2)
-    .style('visibility', d => isVisible(d) ? 'visible' : 'hidden')
+    .style('visibility', visibility)
     .on('mouseover', d => {
       div.transition()
         .duration(200)
@@ -207,8 +240,7 @@ $(document).ready(() => {
       $('.legend-2').hide();
       $('.legend-1').show();
 
-      $('#year-maps').empty();      
-
+      $('#year-maps').empty();
     } else {
       $('.year').addClass('inactive').removeClass('active');
       $(`.year-${year}`).removeClass('inactive').addClass('active');
@@ -219,8 +251,6 @@ $(document).ready(() => {
 
       d3.select(`.year-${year}`).raise();
     }
-
-
   });
 
   $('.high-checkbox').on('change', () => $('.TMAX').toggle());

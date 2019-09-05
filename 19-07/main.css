@@ -102,13 +102,13 @@ text {
 .TMIN path {
   fill: none;
   stroke: #75B0FF;
-  opacity: 0.15;
+  opacity: 0.25;
 }
 
 .TMAX path {
   fill: none;
   stroke: #EE6A6A;
-  opacity: 0.15;
+  opacity: 0.25;
 }
 
 .inactive path {
