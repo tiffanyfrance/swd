@@ -1,4 +1,4 @@
-let margin = { top: 0, right: 0, bottom: 0, left: 0 },
+let margin = { top: 0, right: 0, bottom: 40, left: 0 },
   containerWidth = d3.select('.col-right').node().getBoundingClientRect().width;
 
 let width = containerWidth - margin.left - margin.right,
@@ -204,16 +204,23 @@ $(document).ready(() => {
 
     if (year === 'all') {
       $('.year').removeClass('active inactive');
+      $('.legend-2').hide();
       $('.legend-1').show();
+
+      $('#year-maps').empty();      
 
     } else {
       $('.year').addClass('inactive').removeClass('active');
       $(`.year-${year}`).removeClass('inactive').addClass('active');
       $('.legend-1').hide();
-      $('.legend-3').empty();
+      $('.legend-2').show();
+
+      $('#year-maps').html(`<p>${year}</p>`);
 
       d3.select(`.year-${year}`).raise();
     }
+
+
   });
 
   $('.high-checkbox').on('change', () => $('.TMAX').toggle());

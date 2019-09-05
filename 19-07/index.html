@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>SWD July 2019</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="main.css" />
 </head>
 
 <body>
   <div class="flex-container">
     <div class="col col-left">
-      <h1>72 years of Highs and Lows</h1>
+      <h1>72 Years of Highs and Lows</h1>
       <h2>NOAA temperature data from Richmond, VA Airfield</h2>
+
       <div class="filter">
-        Year: 
+        Year:
         <span class="select-wrapper">
           <select>
             <option value="all">All</option>
@@ -26,23 +26,38 @@
         <span><input type="checkbox" checked class="low-checkbox"> Lows</span>
       </div>
 
-      <div class="legend">
+      <div class="legend small">
         <span class="legend-1">
           <svg height="5" width="5">
             <circle cx="2.5" cy="2.5" r="2.5" fill="blue" />
-            Sorry, your browser does not support inline SVG.  
-          </svg> 
+            Sorry, your browser does not support inline SVG.
+          </svg>
           TEMPERATURES 0 AND UNDER
           <br />
           <svg height="5" width="5">
             <circle cx="2.5" cy="2.5" r="2.5" fill="red" />
-            Sorry, your browser does not support inline SVG.  
-          </svg> 
+            Sorry, your browser does not support inline SVG.
+          </svg>
           TEMPERATURES 100 AND OVER
+          <br /><br />
+          <span style="color: #75B0FF">&horbar; </span>
+          LOW TEMPERATURES
           <br />
+          <span style="color: #EE6A6A;">&horbar; </span>
+          HIGH TEMPERATURES
           <br />
         </span>
-        <span class="legend-2">
+        <span class="legend-2" style="display: none;">
+          <svg height="5" width="5">
+            <circle cx="2.5" cy="2.5" r="2.5" fill="blue" />
+          </svg>
+          DAY'S LOW TEMP (HOVER FOR DETAIL)
+          <br />
+          <svg height="5" width="5">
+            <circle cx="2.5" cy="2.5" r="2.5" fill="red" />
+          </svg>
+          DAY'S HIGH TEMP (HOVER FOR DETAIL)
+          <br /><br />
           <span style="color: #75B0FF">&horbar; </span>
           LOW TEMPERATURES
           <br />
@@ -50,18 +65,69 @@
           HIGH TEMPERATURES
         </span>
         <span class="legend-3">
-
         </span>
       </div>
+
+      <div id="year-maps"></div>
     </div>
 
     <div class="col col-right"></div>
   </div>
 
-  <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
+  <div class="flex-container" id="details-section">
+    <div class="col col-left">
+      <div class="block">
+        <h3>Change Over Time</h3>
+        <p>TBD</p>
+        
+      </div>
+      <div class="block">
+        <h3>Precipitation</h3>
+        <p>[Fall] is the season with the most precipitation, averaging [10 inches] per year between [May and August].
+          [January] is the driest month in Richmond, with an average of [0] inches of rainfall. Did you know?
+          According to <a
+            href="https://wgntv.com/2018/10/12/does-the-water-equivalent-of-snow-count-as-part-of-our-annual-rainfall-total-so-that-abundant-snowfall-could-make-up-for-a-drier-rainy-season/">WGN9</a>,
+          "The annual precipitation total is arrived by summing the daily amounts of the water equivalent of all
+          precipitation that has fallen. When precipitation falls as rain the amount is read directly from the official
+          rain gauge and recorded in hundredths of an inch. The smallest amount of measurable precipitation is 0.01 inch
+          with lesser amounts recorded as a trace. When the precipitation falls as snow, the snow is collected in the
+          rain gauge, melted and measured as if it fell as rain. Typically an inch of snow yields about 0.10 inches of
+          liquid equivalent, but that can vary depending upon the temperature during the snowfall."</p>
+      </div>
+      <div class="block">
+        <h3>Snow</h3>
+        <p>Richmond sees an average of [0.5] inches of snowfall per year. The snowiest winters on record are: [1958 with
+          3 inches, 1978 with 6 inches, and 1989 with 15 inches]. There were [2] years with no measurable snowfall:
+          [1999, 2001].</p>
+      </div>
+    </div>
+    <div class="col col-right">
+      <div class="block">
+        <h3>1948</h3>
+        <hr />
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi voluptas repellendus eaque, dignissimos
+          possimus perspiciatis magnam ipsa obcaecati, nobis, similique voluptatibus minima porro adipisci eius nemo
+          iste libero hic magni.</p>
+      </div>
+      <div class="block">
+        <h3>1977</h3>
+        <hr />
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi voluptas repellendus eaque, dignissimos
+          possimus perspiciatis magnam ipsa obcaecati, nobis, similique voluptatibus minima porro adipisci eius nemo
+          iste libero hic magni.</p>
+      </div>
+      <div class="block">
+        <h3>1995</h3>
+        <hr />
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eligendi voluptas repellendus eaque, dignissimos
+          possimus perspiciatis magnam ipsa obcaecati, nobis, similique voluptatibus minima porro adipisci eius nemo
+          iste libero hic magni.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="d3-scale-radial.js"></script>
   <script src="main.js"></script>

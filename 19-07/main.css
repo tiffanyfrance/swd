@@ -1,8 +1,9 @@
-* {
-  font-family: 'Open Sans', sans-serif;
-}
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:400,400i|Roboto:400,400i&display=swap');
 
 body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 1.35;
   background: #eee;
   text-align: center;
 }
@@ -11,13 +12,20 @@ textarea, select, input, button {
   outline: none; 
 }
 
+.small {
+  font-size: 10px;
+}
+
 .flex-container {
   display: flex;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.flex-container:first-of-type {
   align-items: center;
   justify-content: center;
   min-height: 90vh;
-  max-width: 1440px;
-  margin: 0 auto;
 }
 
 .col-left {
@@ -32,22 +40,28 @@ textarea, select, input, button {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 42px;
   margin: 20px 0px 10px;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 h2 {
-  font-size: 1em;
+  font-size: 16px;
   margin: 5px 0;
 }
 
+h3 {
+  font-size: 36px;
+  margin: 20px 0px 10px;
+  font-family: 'Cormorant Garamond', serif;
+}
+
 .filter {
-  margin-top: 10px;
+  margin-top: 50px;
 }
 
 .legend {
-  margin-top: 70px;
-  font-size: 10px;
+  margin-top: 50px;
   font-weight: 100;
   line-height: 1.75;
 }
@@ -67,8 +81,8 @@ select {
   background: #fff;
   border: none;
   font-weight: bold;
-  font-family: 'Open sans';
-  font-size: 1em;
+  font-family: 'Roboto';
+  font-size: 16px;
   padding: 10px;
   border-radius: 0;
   -webkit-border-radius: 0px;
@@ -147,13 +161,22 @@ div.tooltip {
 }
 
 .tooltip .TMIN {
-  font-size: 14px;
+  font-size: 16px;
   margin: 5px 0;
   color: blue;
 }
 
 .tooltip .TMAX {
-  font-size: 14px;
+  font-size: 16px;
   margin: 5px 0;
   color: red;
+}
+
+#details-section .col .block {
+  padding-right: 100px;
+  margin-bottom: 100px;
+}
+
+#year-maps {
+  margin-top: 50px;
 }
