@@ -24,7 +24,7 @@ let div = d3.select("body").append("div")
 let prettyDate = d3.timeFormat('%a, %b %d, %Y');
 
 const animDelay = 1000;
-const animYearOffset = 100;
+const animYearOffset = 150;
 
 d3.csv("weather.csv", (d) => {
   d.DATE = parseTime(d.DATE);
@@ -68,8 +68,44 @@ d3.csv("weather.csv", (d) => {
     }
   }, animDelay);
 
-  console.log(dataByYear);
+  anime({
+    targets: '.legend',
+    opacity: 1,
+    delay: animDelay + (72 * animYearOffset) + 750,
+    easing: 'easeInOutSine'
+  });
+
+  anime({
+    targets: '.filter',
+    opacity: 1,
+    delay: animDelay + (72 * animYearOffset) + 1750,
+    easing: 'easeInOutSine'
+  });
 });
+
+const DEG_TO_RAD = Math.PI / 180;
+
+let g = svg.append("g")
+  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// buildText(g, "WINTER", 30, (outerRadius - 40));
+// buildText(g, "SPRING", 110, (outerRadius - 10));
+// buildText(g, "SUMMER", 200, (outerRadius + 10));
+// buildText(g, "AUTUMN", 290, (outerRadius - 20));
+
+// function buildText(g, text, angle, radius) {
+//   angle -= 90;
+
+//   let x = Math.cos(angle * DEG_TO_RAD) * radius;
+//   let y = Math.sin(angle * DEG_TO_RAD) * radius;
+
+//   g.append('text')
+//     .text(text)
+//     .attr('text-anchor', 'middle')
+//     .attr('transform', `translate(${x},${y})rotate(${angle + 90})`)
+//     .style('fill', '#666')
+//     .style('font-size', '8px')
+// }
 
 function getDataByYear(data) {
   let dataByYear = {};
@@ -161,13 +197,6 @@ function buildYearGraph(year, svg, data, count) {
   buildTemperatureGroup(g, data, 'TMAX', d => d.TMAX >= 100, count);
   buildTemperatureGroup(g, data, 'TMIN', d => d.TMIN <= 0, count);
 
-  // anime({
-  //   targets: `.year-${year} path`,
-  //   strokeDashoffset: [anime.setDashoffset, 0],
-  //   easing: 'easeInOutSine',
-  //   duration: 1500,
-  // });
-
   $('#title-years').text(count);
 }
 
@@ -198,7 +227,7 @@ function buildTemperatureGroup(parent, data, keyName, isVisible, count) {
   setTimeout(() => {
     let hiddenCircles = data.filter(d => !isVisible(d));
     buildCircles(g, keyName, hiddenCircles, 'hidden', x, y);
-  }, (72 - count) * animYearOffset);
+  }, (72 - count) * animYearOffset + 2500);
 }
 
 function buildCircles(g, keyName, data, visibility, x, y) {

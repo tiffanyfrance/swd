@@ -42,7 +42,13 @@ textarea, select, input, button {
 h1 {
   font-size: 42px;
   margin: 20px 0px 10px;
+  /* margin: 150px 0px 10px; */
   font-family: 'Cormorant Garamond', serif;
+}
+
+#title-years {
+  width: 40px;
+  display: inline-block;
 }
 
 h2 {
@@ -58,12 +64,14 @@ h3 {
 
 .filter {
   margin-top: 50px;
+  opacity: 0;
 }
 
 .legend {
   margin-top: 50px;
   font-weight: 100;
   line-height: 1.75;
+  opacity: 0;
 }
 
 .legend svg {
@@ -170,6 +178,10 @@ div.tooltip {
   font-size: 16px;
   margin: 5px 0;
   color: red;
+}
+
+#details-section {
+  opacity: 0;
 }
 
 #details-section .col .block {
