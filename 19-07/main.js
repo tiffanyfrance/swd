@@ -11,7 +11,7 @@ let parseTime = d3.timeParse("%Y-%m-%d"),
   formatMonth = d3.timeFormat("%b"),
   fullCircle = 2 * Math.PI;
 
-let svg = d3.select(".col-right").append("svg")
+let svg = d3.select("#viz").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -224,6 +224,9 @@ function buildTemperatureGroup(parent, data, keyName, isVisible, count) {
   setTimeout(() => {
     let hiddenCircles = data.filter(d => !isVisible(d));
     buildCircles(g, keyName, hiddenCircles, 'hidden', x, y);
+
+    $('.lazy').fadeIn();
+
   }, (72 - count) * animYearOffset + 2500);
 }
 
@@ -259,29 +262,53 @@ $(document).ready(() => {
   }
 
   $('select').change(function () {
+    $('#year-text').empty();
+
     let year = $(this).val();
 
-    if (year === 'all') {
-      $('.year').removeClass('active inactive');
-      $('.legend-2').hide();
-      $('.legend-1').show();
-
-      // $('#year-maps').empty();
-    } else {
-      $('.year').addClass('inactive').removeClass('active');
-      $(`.year-${year}`).removeClass('inactive').addClass('active');
-      $('.legend-1').hide();
-      $('.legend-2').show();
-
-      // $('#year-maps').html(`<p>${year}</p>`);
-
-      d3.select(`.year-${year}`).raise();
-    }
+    changeYear(year);
   });
 
   $('.high-checkbox').on('change', () => $('.TMAX').toggle());
   $('.low-checkbox').on('change', () => $('.TMIN').toggle());
+
+  var $select = $('select');
+
+  $('a').click(function (e) {
+    // e.preventDefault();
+    let clickedYear = $(this).data('year');
+
+    $('select').val(clickedYear);
+
+    changeYear(clickedYear);
+
+    $("html, body").animate({ scrollTop: 0 }, "slow");
+
+    $('#year-text').text(clickedYear);
+
+    return false;
+  });
+  
 });
+
+function changeYear(year) {
+  if (year === 'all') {
+    $('.year').removeClass('active inactive');
+    $('.legend-2').hide();
+    $('.legend-1').show();
+
+    // $('#year-maps').empty();
+  } else {
+    $('.year').addClass('inactive').removeClass('active');
+    $(`.year-${year}`).removeClass('inactive').addClass('active');
+    $('.legend-1').hide();
+    $('.legend-2').show();
+
+    // $('#year-maps').html(`<p>${year}</p>`);
+
+    d3.select(`.year-${year}`).raise();
+  }
+}
 
 function findSummerAverage(dataByYear) {
   let maxAverage = -Infinity;

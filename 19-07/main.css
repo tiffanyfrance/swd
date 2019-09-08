@@ -7,6 +7,7 @@ body {
   background: #eee;
   text-align: center;
   color: #222;
+  overflow-y: scroll;
 }
 
 a {
@@ -33,7 +34,7 @@ textarea, select, input, button {
   margin: 0 auto;
 }
 
-.flex-container:first-of-type {
+#top-container {
   align-items: center;
   justify-content: center;
   min-height: 90vh;
@@ -234,4 +235,21 @@ div.tooltip {
 
 #year-maps {
   margin-top: 50px;
+}
+
+#viz {
+  position: relative;
+}
+
+#year-text {
+  position: absolute;
+  top: 50%;
+  left: 44%;
+  font-size: 32px;
+}
+
+.lazy {
+  display: none;
+  width: 100%;
+  margin-top: 10vh;
 }
