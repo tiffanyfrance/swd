@@ -181,7 +181,26 @@ div.tooltip {
 }
 
 #details-section {
-  opacity: 0;
+  /* opacity: 0; */
+}
+
+#details-section .flex-container {
+  align-items: inherit;
+  justify-content: center;
+  min-height: inherit;
+}
+
+#details-section .flex-container .col-left {
+  width: calc(95% - 350px);
+  padding: 0 5% 0 0;
+}
+
+#details-section .flex-container .col-right {
+  width: 350px;
+}
+
+#details-section .flex-container .col-right img {
+  width: 100%;
 }
 
 #details-section .col .block {

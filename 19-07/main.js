@@ -81,6 +81,9 @@ d3.csv("weather.csv", (d) => {
     delay: animDelay + (72 * animYearOffset) + 1750,
     easing: 'easeInOutSine'
   });
+
+  // findSummerAverage(dataByYear);
+  findWinterAverage(dataByYear);
 });
 
 const DEG_TO_RAD = Math.PI / 180;
@@ -109,17 +112,11 @@ let g = svg.append("g")
 
 function getDataByYear(data) {
   let dataByYear = {};
-  let dataByDay = {};
 
   for (let d of data) {
     let year = d.DATE.toISOString().substr(0, 4);
     addToMap(dataByYear, year, d);
-
-    let monthDay = d.DATE.toISOString().substr(5, 5);
-    addToMap(dataByDay, monthDay, d);
   }
-
-  console.log(dataByDay);
 
   return dataByYear;
 }
@@ -286,4 +283,79 @@ $(document).ready(() => {
   $('.low-checkbox').on('change', () => $('.TMIN').toggle());
 });
 
+function findSummerAverage(dataByYear) {
+  let maxAverage = -Infinity;
+  let hottestSummer = null;
 
+  let csvStr = 'Year, Summer Average TMAX\n';
+
+  for (let year in dataByYear) {
+    let start = `${year}-06-21`;
+    let end = `${year}-09-23`;
+
+    let data = dataByYear[year];
+
+    let summerData = data.filter(d => {
+      let date = moment(d.DATE);
+      return date.isSameOrAfter(start) && date.isSameOrBefore(end)
+    });
+
+    let average = d3.mean(summerData, d => d.TMAX);
+
+    if (average > maxAverage) {
+      maxAverage = average;
+      hottestSummer = year;
+    }
+
+    csvStr += `${year}, ${average}\n`;
+  }
+
+  console.log('Hottest Summer', hottestSummer, maxAverage);
+
+  console.log(csvStr);
+}
+
+function findWinterAverage(dataByYear) {
+  let csvStr = 'Year, Winter Average TMIN\n';
+
+  for (let year in dataByYear) {
+    let winterData = [];
+
+    if (year == '1948') {
+      let start = `${year}-01-01`;
+      let end = `${year}-03-19`;
+
+      let data = dataByYear[year];
+
+      winterData = data.filter(d => {
+        let date = moment(d.DATE);
+        return date.isSameOrAfter(start) && date.isSameOrBefore(end)
+      });
+    } else {
+      let start = `${year - 1}-12-21`;
+      let end = `${year}-03-19`;
+
+      let data1 = dataByYear[year - 1];
+      let data2 = dataByYear[year];
+
+      winterData = [
+        ...data1.filter(d => {
+          let date = moment(d.DATE);
+          return date.isSameOrAfter(start) && date.isSameOrBefore(end)
+        }),
+        ...data2.filter(d => {
+          let date = moment(d.DATE);
+          return date.isSameOrAfter(start) && date.isSameOrBefore(end)
+        })
+      ];
+    }
+
+    // console.log(winterData)
+
+    let average = d3.mean(winterData, d => d.TMIN);
+
+    csvStr += `${year}, ${average}\n`;
+  }
+
+  console.log(csvStr);
+}
