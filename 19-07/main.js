@@ -269,14 +269,14 @@ $(document).ready(() => {
       $('.legend-2').hide();
       $('.legend-1').show();
 
-      $('#year-maps').empty();
+      // $('#year-maps').empty();
     } else {
       $('.year').addClass('inactive').removeClass('active');
       $(`.year-${year}`).removeClass('inactive').addClass('active');
       $('.legend-1').hide();
       $('.legend-2').show();
 
-      $('#year-maps').html(`<p>${year}</p>`);
+      // $('#year-maps').html(`<p>${year}</p>`);
 
       d3.select(`.year-${year}`).raise();
     }
