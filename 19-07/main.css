@@ -1,11 +1,22 @@
-@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:400,400i|Roboto:400,400i&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:400,400i|Roboto:400,400i,700&display=swap');
 
 body {
   font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-  line-height: 1.35;
+  font-size: 14px;
+  line-height: 1.5;
   background: #eee;
   text-align: center;
+  color: #222;
+}
+
+a {
+  color: #222;
+  text-decoration: none;
+  border-bottom: dotted 1px #333;
+}
+
+a:hover {
+  color: black;
 }
 
 textarea, select, input, button { 
@@ -54,11 +65,12 @@ h1 {
 h2 {
   font-size: 16px;
   margin: 5px 0;
+  font-weight: normal;
 }
 
 h3 {
-  font-size: 36px;
-  margin: 20px 0px 10px;
+  font-size: 32px;
+  margin: 20px 0px 0px;
   font-family: 'Cormorant Garamond', serif;
 }
 
@@ -180,6 +192,14 @@ div.tooltip {
   color: red;
 }
 
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}
+
 #details-section {
   /* opacity: 0; */
 }
@@ -206,6 +226,10 @@ div.tooltip {
 #details-section .col .block {
   padding-right: 100px;
   margin-bottom: 100px;
+}
+
+#details-section .col .block a {
+  font-weight: bold;
 }
 
 #year-maps {
