@@ -144,7 +144,8 @@ function buildBackgroundPath(dataByYear) {
 
   g.append("path")
     .datum(maxVals)
-    .attr("fill", "#efefef")
+    // .attr("fill", "#efefef")
+    .attr("fill", "#fff")
     .attr("stroke", "none")
     .attr("d", bgTMAX)
 }
@@ -274,8 +275,7 @@ $(document).ready(() => {
 
   var $select = $('select');
 
-  $('a').click(function (e) {
-    // e.preventDefault();
+  $('a.year-link').click(function (e) {
     let clickedYear = $(this).data('year');
 
     $('select').val(clickedYear);

@@ -4,7 +4,8 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  background: #eee;
+  /* background: #eee; */
+  background: #fff;
   text-align: center;
   color: #222;
   overflow-y: scroll;
@@ -93,13 +94,13 @@ h3 {
 }
 
 .select-wrapper {
-  background: #fff;
+  /* background: #fff; */
   padding: 1px;
   margin: 0 5px;
 }
 
 select {
-  background: #fff;
+  /* background: #fff; */
   border: none;
   font-weight: bold;
   font-family: 'Roboto';
@@ -133,7 +134,8 @@ text {
 }
 
 .inactive path {
-  stroke: #dadada;
+  /* stroke: #dadada; */
+  stroke: #eaeaea;
 }
 
 .active path {
