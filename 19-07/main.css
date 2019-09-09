@@ -248,8 +248,53 @@ div.tooltip {
   font-size: 32px;
 }
 
+img {
+  max-width: 100%;
+}
+
 .lazy {
   display: none;
   width: 100%;
   margin-top: 10vh;
+}
+
+@media (max-width: 1200px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 14px;
+  }
+
+  h3 {
+    font-size: 28px;
+  }
+
+  .flex-container {
+    display: block;
+  }
+
+  .col {
+    width: 90%;
+    padding: 0 5%;
+  }
+
+  .col-left {
+    text-align: center;
+  }
+
+  #details-section .col .block {
+    padding-right: 0px;
+    margin-bottom: 100px;
+    text-align: left;
+  }
+  #details-section .col .block .flex-container {
+    display: flex;
+  }
+
+  #details-section .col .block .col-left, #details-section .col .block .col-right {
+    width: 50%;
+    text-align: left;
+  }
 }
