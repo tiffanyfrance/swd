@@ -133,6 +133,16 @@ text {
   opacity: 0.25;
 }
 
+@media (max-width: 1200px) {
+  .TMIN path {
+    opacity: 0.15;
+  }
+  
+  .TMAX path {
+    opacity: 0.15;
+  }
+}
+
 .inactive path {
   /* stroke: #dadada; */
   stroke: #eaeaea;
@@ -203,10 +213,6 @@ div.tooltip {
   color: blue;
 }
 
-#details-section {
-  /* opacity: 0; */
-}
-
 #details-section .flex-container {
   align-items: inherit;
   justify-content: center;
@@ -260,6 +266,14 @@ img {
   margin-top: 10vh;
 }
 
+.mobile-only {
+  display: hide;
+}
+
+.footer {
+  text-align: center;
+}
+
 @media (max-width: 1200px) {
   h1 {
     font-size: 32px;
@@ -271,6 +285,7 @@ img {
 
   h3 {
     font-size: 28px;
+    text-align: center;
   }
 
   .flex-container {
@@ -292,11 +307,36 @@ img {
     text-align: left;
   }
   #details-section .col .block .flex-container {
-    display: flex;
+    display: block;
   }
 
   #details-section .col .block .col-left, #details-section .col .block .col-right {
-    width: 50%;
+    width: 100%;
     text-align: left;
+  }
+
+  #details-section .col .block .col-right {
+    padding: 0;
+  }
+
+  .legend {
+    font-weight: 400;
+  }
+
+  .mobile-hide {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .filter, .legend {
+    margin-top: 20px;
+  }
+
+  #viz {
+    width: 100%;
+    padding: 0;
   }
 }
