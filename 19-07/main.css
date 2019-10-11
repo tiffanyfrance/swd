@@ -65,7 +65,7 @@ h1 {
 }
 
 h2 {
-  font-size: 16px;
+  font-size: 20px;
   margin: 5px 0;
   font-weight: normal;
 }
@@ -79,6 +79,7 @@ h3 {
 .filter {
   margin-top: 50px;
   opacity: 0;
+  font-size: 20px;
 }
 
 .legend {
@@ -104,7 +105,7 @@ select {
   border: none;
   font-weight: bold;
   font-family: 'Roboto';
-  font-size: 16px;
+  font-size: 20px;
   padding: 10px;
   border-radius: 0;
   -webkit-border-radius: 0px;
@@ -279,7 +280,7 @@ img {
     font-size: 32px;
   }
 
-  h2 {
+  h2, .filter, select {
     font-size: 14px;
   }
 
